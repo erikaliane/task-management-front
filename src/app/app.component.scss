@@ -1,0 +1,36 @@
+// Reset y estilos globales
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  background: #f8fafc;
+  color: #0f172a;
+  overflow-x: hidden;
+}
+
+// Mejorar el renderizado de fuentes
+body, input, button, textarea, select {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Focus visible para accesibilidad
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+// Remover outline por defecto en elementos que manejan focus-visible
+*:focus:not(:focus-visible) {
+  outline: none;
+}
