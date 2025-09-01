@@ -49,7 +49,7 @@ export interface TaskCreateRequest {
   providedIn: 'root'
 })
 export class TaskService {
-  private readonly API_URL = environment.API_URL ;
+private readonly API_URL = `${environment.API_URL}/tasks`;
 
   constructor(
     private http: HttpClient,
