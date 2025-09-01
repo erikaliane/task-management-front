@@ -49,7 +49,7 @@ export interface TaskCreateRequest {
   providedIn: 'root'
 })
 export class TaskService {
-  private readonly API_URL = environment.apiUrl;
+  private readonly API_URL = environment.apiUrl || 'http://localhost:5137/api';
 
   constructor(
     private http: HttpClient,

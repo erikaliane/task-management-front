@@ -17,9 +17,7 @@ export interface Employee {
 })
 
 export class EmployeeService {
-  private readonly apiUrl = `${environment.apiUrl}/profile/employee-profiles`;
-
-  
+  private readonly apiUrl = `${environment.apiUrl}/profile/employee-profiles` || 'http://localhost:5137/api';
 
   constructor(
     private http: HttpClient,
