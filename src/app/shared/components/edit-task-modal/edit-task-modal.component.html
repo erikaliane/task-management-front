@@ -1,0 +1,133 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onClose()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h2>Editar Tarea</h2>
+      <button class="close-btn" (click)="onClose()" type="button">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+        <!-- Título -->
+        <div class="form-group">
+          <label for="title">Título *</label>
+          <input
+            type="text"
+            id="title"
+            formControlName="title"
+            class="form-control"
+            [class.error]="getFieldError('title')"
+            placeholder="Ingresa el título de la tarea">
+          <div class="error-message" *ngIf="getFieldError('title')">
+            {{ getFieldError('title') }}
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="form-group">
+          <label for="description">Descripción *</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            class="form-control"
+            [class.error]="getFieldError('description')"
+            rows="4"
+            placeholder="Describe los detalles de la tarea">
+          </textarea>
+          <div class="error-message" *ngIf="getFieldError('description')">
+            {{ getFieldError('description') }}
+          </div>
+        </div>
+
+        <!-- Empleado Asignado -->
+        <div class="form-group">
+          <label for="assignedTo">Empleado Asignado *</label>
+          <select
+            id="assignedTo"
+            formControlName="assignedTo"
+            class="form-control"
+            [class.error]="getFieldError('assignedTo')">
+            <option value="">Selecciona un empleado</option>
+            <option *ngFor="let employee of employees" [value]="employee.userId">
+              {{ getEmployeeFullName(employee) }}
+            </option>
+          </select>
+          <div class="error-message" *ngIf="getFieldError('assignedTo')">
+            {{ getFieldError('assignedTo') }}
+          </div>
+          <div class="loading-employees" *ngIf="loadingEmployees">
+            <span class="material-icons spinning">autorenew</span>
+            Cargando empleados...
+          </div>
+        </div>
+
+        <!-- Prioridad -->
+        <div class="form-group">
+          <label for="priority">Prioridad *</label>
+          <select
+            id="priority"
+            formControlName="priority"
+            class="form-control"
+            [class.error]="getFieldError('priority')">
+            <option value="">Selecciona una prioridad</option>
+            <option value="Baja">Baja</option>
+            <option value="Media">Media</option>
+            <option value="Alta">Alta</option>
+          </select>
+          <div class="error-message" *ngIf="getFieldError('priority')">
+            {{ getFieldError('priority') }}
+          </div>
+        </div>
+
+        <!-- Fecha de Vencimiento -->
+        <div class="form-group">
+          <label for="dueDate">Fecha de Vencimiento *</label>
+          <input
+            type="date"
+            id="dueDate"
+            formControlName="dueDate"
+            class="form-control"
+            [class.error]="getFieldError('dueDate')">
+          <div class="error-message" *ngIf="getFieldError('dueDate')">
+            {{ getFieldError('dueDate') }}
+          </div>
+        </div>
+
+        <!-- Campos no editables (solo para mostrar) -->
+        <div class="readonly-fields" *ngIf="task">
+          <h4>Información no editable:</h4>
+          <div class="readonly-grid">
+            <div class="readonly-item">
+              <label>Estado:</label>
+              <span class="status-badge" [style.background-color]="getStatusColor()">
+                {{ task.status }}
+              </span>
+            </div>
+            <div class="readonly-item">
+              <label>Creado:</label>
+              <span>{{ task.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+            <div class="readonly-item">
+              <label>Actualizado:</label>
+              <span>{{ task.updatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="onClose()" [disabled]="loading">
+        Cancelar
+      </button>
+      <button type="submit" class="btn btn-primary" (click)="onSubmit()" [disabled]="!editForm.valid || loading">
+        <span *ngIf="loading" class="spinner"></span>
+        {{ loading ? 'Guardando...' : 'Guardar Cambios' }}
+      </button>
+    </div>
+  </div>
+</div>

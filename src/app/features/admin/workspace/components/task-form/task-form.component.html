@@ -1,0 +1,132 @@
+<div class="task-form-container">
+  <h2>Crear Nueva Tarea</h2>
+  <p class="subtitle">Completa los campos para organizar tu trabajo</p>
+
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+    <!-- Sección de título -->
+    <div class="form-section">
+      <h3>¿Cuál es tu tarea?</h3>
+      <p class="example">Ejemplo: Revisar documentación</p>
+      
+      <div class="input-container" [class.invalid]="title?.invalid && title?.touched">
+        <textarea 
+          formControlName="title" 
+          placeholder="Describe tu tarea..." 
+          maxlength="100"
+          rows="2">
+        </textarea>
+        <div class="char-counter">{{ title?.value?.length || 0 }}/100</div>
+      </div>
+      
+      <div class="error-message" *ngIf="title?.invalid && title?.touched">
+        El título es obligatorio
+      </div>
+    </div>
+
+    <!-- Sección de prioridad y fecha -->
+    <div class="form-row">
+      <!-- Prioridad -->
+      <div class="form-section">
+        <h3>Prioridad</h3>
+        <div class="priority-options">
+          <label class="priority-option" [class.selected]="taskForm.get('priority')?.value === 'baja'">
+            <input type="radio" formControlName="priority" value="baja">
+            Baja
+          </label>
+          <label class="priority-option" [class.selected]="taskForm.get('priority')?.value === 'media'">
+            <input type="radio" formControlName="priority" value="media">
+            Media
+          </label>
+          <label class="priority-option" [class.selected]="taskForm.get('priority')?.value === 'alta'">
+            <input type="radio" formControlName="priority" value="alta">
+            Alta
+          </label>
+        </div>
+      </div>
+
+      <!-- Fecha límite -->
+      <div class="form-section">
+        <h3>Fecha límite</h3>
+        <div class="quick-date-options">
+          <button type="button" class="date-quick-option" (click)="setToday()">Hoy</button>
+          <button type="button" class="date-quick-option" (click)="setTomorrow()">Mañana</button>
+          <button type="button" class="date-quick-option" (click)="setNextWeek()">Próxima semana</button>
+        </div>
+        
+        <div class="input-container">
+          <input type="date" formControlName="deadline" [min]="minDate.toISOString().split('T')[0]" 
+                 [max]="maxDate.toISOString().split('T')[0]">
+        </div>
+        
+        <div class="selected-date" *ngIf="taskForm.get('deadline')?.value">
+          {{ formatSelectedDate(taskForm.get('deadline')?.value) }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección de descripción -->
+    <div class="form-section">
+      <h3>Describe los detalles</h3>
+      <p class="description-help">
+        Explica qué necesitas hacer paso a paso. Incluye objetivos específicos, recursos necesarios, 
+        criterios de éxito y cualquier consideración especial...
+      </p>
+      
+      <div class="input-container" [class.invalid]="description?.invalid && description?.touched">
+        <textarea 
+          formControlName="description" 
+          placeholder="Detalla los pasos a seguir..." 
+          maxlength="500"
+          rows="5">
+        </textarea>
+        <div class="char-counter">{{ description?.value?.length || 0 }}/500</div>
+      </div>
+      
+      <div class="error-message" *ngIf="description?.invalid && description?.touched">
+        La descripción es obligatoria
+      </div>
+    </div>
+
+    <!-- Sección de responsable -->
+    <div class="form-section">
+      <h3>Responsable</h3>
+      
+      <!-- Mensaje de carga -->
+      <div *ngIf="employeesLoading" class="loading-message">
+        Cargando empleados...
+      </div>
+      
+      <!-- Mensaje de error -->
+      <div class="error-message" *ngIf="errorMessage && !employeesLoading">
+        {{ errorMessage }}
+      </div>
+      
+      <!-- Lista de empleados -->
+      <div class="responsible-options" *ngIf="!employeesLoading && employees.length > 0">
+        <label *ngFor="let employee of employees" class="responsible-option" 
+               [class.selected]="taskForm.get('assignedTo')?.value === employee.userId">
+          <input type="radio" [value]="employee.userId" formControlName="assignedTo">
+          <div class="user-info">
+            <div class="user-name">{{ employee.firstName }} {{ employee.lastName }}</div>
+            <div class="user-details">ID: {{ employee.userId }}</div>
+          </div>
+        </label>
+      </div>
+      
+      <!-- Mensaje cuando no hay empleados -->
+      <div *ngIf="!employeesLoading && employees.length === 0" class="no-employees">
+        No hay empleados disponibles
+      </div>
+      
+      <!-- Validación -->
+      <div class="error-message" *ngIf="assignedTo?.invalid && assignedTo?.touched">
+        Debe seleccionar un responsable
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="form-actions">
+      <!-- Removed buttons to delegate actions to WorkspaceComponent -->
+    </div>
+  </form>
+</div>

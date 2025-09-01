@@ -1,1 +1,53 @@
-<p>modal works!</p>
+<div class="modal-overlay" 
+     [class.show]="visible" 
+     (click)="onBackdropClick($event)"
+     *ngIf="visible">
+  
+  <div class="modal-container" 
+       [class]="'modal-' + size"
+       (click)="$event.stopPropagation()">
+    
+    <!-- Modal Header -->
+    <div class="modal-header" *ngIf="title || showCloseButton">
+      <div class="modal-title" *ngIf="title">
+        <h2>{{ title }}</h2>
+      </div>
+      <button class="close-button" 
+              *ngIf="showCloseButton"
+              (click)="closeModal()"
+              type="button"
+              aria-label="Cerrar modal">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <ng-content></ng-content>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer" *ngIf="showFooter">
+      <!-- Render custom footer content explicitly -->
+      <ng-content select=".custom-footer"></ng-content>
+
+      <!-- Default footer buttons if no custom footer provided -->
+      <div class="default-actions" *ngIf="!hasCustomFooter()">
+        <button 
+          *ngIf="showCancelButton"
+          class="btn btn-secondary" 
+          (click)="cancelAction()"
+          type="button">
+          {{ cancelText }}
+        </button>
+        <button 
+          *ngIf="showConfirmButton"
+          class="btn btn-primary" 
+          (click)="confirmAction()"
+          type="button">
+          {{ confirmText }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

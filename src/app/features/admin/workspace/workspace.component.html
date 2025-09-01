@@ -1,0 +1,276 @@
+<div class="workspace-container">
+  <!-- Header actualizado -->
+  <app-header 
+    [userProfile]="userProfile"
+    [showSearch]="true"
+    [showNotifications]="true"
+    (onSearch)="onHeaderSearch($event)"
+    (onLogout)="onLogout()"
+    (onProfileClick)="onProfileClick()">
+  </app-header>
+
+  <!-- Main workspace content -->
+  <div class="workspace-content">
+    <div class="content-wrapper">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="header-info">
+          <h1>Espacio de Trabajo</h1>
+          <p>Gestiona tus tareas y proyectos de manera eficiente</p>
+          <div class="header-stats">
+            <div class="stats-grid">
+              <div class="stat-item">
+                <span class="material-icons">assignment</span>
+                <div class="stat-content">
+                  <span class="stat-number">{{ getTotalTasks() }}</span>
+                  <span class="stat-label">Total</span>
+                </div>
+              </div>
+              <div class="stat-item pending">
+                <span class="material-icons">schedule</span>
+                <div class="stat-content">
+                  <span class="stat-number">{{ workspaceStats.pendingTasks }}</span>
+                  <span class="stat-label">Pendientes</span>
+                </div>
+              </div>
+              <div class="stat-item progress">
+                <span class="material-icons">play_circle</span>
+                <div class="stat-content">
+                  <span class="stat-number">{{ workspaceStats.inProgressTasks }}</span>
+                  <span class="stat-label">En Progreso</span>
+                </div>
+              </div>
+              <div class="stat-item completed">
+                <span class="material-icons">check_circle</span>
+                <div class="stat-content">
+                  <span class="stat-number">{{ workspaceStats.completedTasks }}</span>
+                  <span class="stat-label">Completadas</span>
+                </div>
+              </div>
+              <div class="stat-item overdue" *ngIf="getOverdueTasks() > 0">
+                <span class="material-icons">error</span>
+                <div class="stat-content">
+                  <span class="stat-number">{{ getOverdueTasks() }}</span>
+                  <span class="stat-label">Vencidas</span>
+                </div>
+              </div>
+              <div class="stat-item high-priority" *ngIf="getHighPriorityTasks() > 0">
+                <span class="material-icons">flag</span>
+                <div class="stat-content">
+                  <span class="stat-number">{{ getHighPriorityTasks() }}</span>
+                  <span class="stat-label">Alta Prioridad</span>
+                </div>
+              </div>
+              <div class="stat-item due-soon" *ngIf="getTasksDueSoon() > 0">
+                <span class="material-icons">today</span>
+                <div class="stat-content">
+                  <span class="stat-number">{{ getTasksDueSoon() }}</span>
+                  <span class="stat-label">Próximas</span>
+                </div>
+              </div>
+            </div>
+            <div class="completion-bar" *ngIf="getTotalTasks() > 0">
+              <div class="completion-info">
+                <span>Progreso del proyecto:</span>
+                <span class="completion-percentage">{{ getCompletionPercentage() }}%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="getCompletionPercentage()"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-secondary" (click)="refreshWorkspace()">
+            <span class="material-icons">refresh</span>
+            Actualizar
+          </button>
+          <button class="btn btn-primary" (click)="createNewTask()">
+            <span class="material-icons">add</span>
+            Nueva Tarea
+          </button>
+        </div>
+      </div>
+
+      <!-- Search Component -->
+      
+      <!-- View Selector -->
+      <div class="view-selector-section">
+        <app-task-view-selector
+          [currentView]="currentViewMode"
+          (viewChange)="onViewModeChange($event)">
+        </app-task-view-selector>
+      </div>
+
+      <!-- Tasks Content -->
+      <div class="tasks-content">
+        <!-- Cards View -->
+        <app-task-grid
+          *ngIf="currentViewMode === 'cards'"
+          [tasks]="paginatedTasks"
+          [loading]="loading"
+          (editTask)="onEditTask($event)"
+          (deleteTask)="onDeleteTask($event)"
+          (viewDetails)="onViewTaskDetails($event)">
+        </app-task-grid>
+
+        <!-- Board View -->
+        <app-task-board
+          *ngIf="currentViewMode === 'board'"
+          [tasks]="filteredTasks"
+          [loading]="loading"
+          (taskEdit)="onEditTask($event)"
+          (taskDelete)="onDeleteTask($event)"
+          (taskView)="onViewTaskDetails($event)"
+          (taskStatusChange)="onTaskStatusChange($event)">
+        </app-task-board>
+
+        <!-- Table View -->
+        <app-task-table
+          *ngIf="currentViewMode === 'table'"
+          [tasks]="paginatedTasks"
+          [loading]="loading"
+          (taskEdit)="onEditTask($event)"
+          (taskDelete)="onDeleteTask($event)"
+          (taskView)="onViewTaskDetails($event)">
+        </app-task-table>
+
+        <!-- Calendar View -->
+        <app-task-calendar
+          *ngIf="currentViewMode === 'calendar'"
+          [tasks]="filteredTasks"
+          [loading]="loading"
+          (taskEdit)="onEditTask($event)"
+          (taskDelete)="onDeleteTask($event)"
+          (taskView)="onViewTaskDetails($event)"
+          (dateClick)="onCalendarDateClick($event)">
+        </app-task-calendar>
+
+        <!-- List View -->
+        <app-task-list
+          *ngIf="currentViewMode === 'list'"
+          [tasks]="paginatedTasks"
+          [loading]="loading"
+          (taskEdit)="onEditTask($event)"
+          (taskDelete)="onDeleteTask($event)"
+          (taskView)="onViewTaskDetails($event)">
+        </app-task-list>
+
+        <!-- Other views - placeholder for now -->
+        <div *ngIf="currentViewMode !== 'cards' && currentViewMode !== 'board' && currentViewMode !== 'table' && currentViewMode !== 'calendar' && currentViewMode !== 'list'" class="view-placeholder">
+          <div class="placeholder-content">
+            <span class="material-icons">construction</span>
+            <h3>Vista en desarrollo</h3>
+            <p>La vista "{{ currentViewMode }}" estará disponible próximamente</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination con opciones responsive (para vistas cards y table) -->
+      <div class="pagination-section" *ngIf="currentViewMode === 'cards' || currentViewMode === 'table'">
+        <app-pagination 
+          [currentPage]="currentPage" 
+          [totalPages]="totalPages"
+          [totalItems]="totalItems"
+          [itemsPerPage]="itemsPerPage"
+          [itemsPerPageOptions]="itemsPerPageOptions"
+          (pageChange)="onPageChange($event)"
+          (itemsPerPageChange)="onItemsPerPageChange($event)">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <app-loader 
+    *ngIf="loading"
+    message="Cargando datos del workspace..."
+    size="lg">
+  </app-loader>
+
+  <!-- Loader específico para eliminación -->
+  <app-loader 
+    *ngIf="deletingTask"
+    message="Eliminando tarea..."
+    size="lg">
+  </app-loader>
+
+  <!-- ✨ NUEVO: Task Creation Modal -->
+<app-modal 
+  [title]="'Nueva Tarea'" 
+  [visible]="isTaskModalVisible"
+  [size]="'lg'"
+  [showFooter]="false"
+  [closeOnBackdropClick]="false"
+  (close)="onTaskModalClose()">
+  
+  <app-task-form
+    (onSubmit)="onTaskCreated($event)"
+    (onCancel)="onTaskModalClose()">
+  </app-task-form>
+
+  <div slot="footer">
+    <button class="btn btn-secondary" (click)="onTaskModalClose()">Cancelar</button>
+    <button class="btn btn-primary" (click)="onTaskFormSubmit()">Crear Tarea</button>
+  </div>
+  </app-modal>
+
+  <!-- Delete Confirmation Modal -->
+  <app-modal 
+    [title]="'Confirmar Eliminación'" 
+    [visible]="isDeleteModalVisible"
+    [confirmText]="deletingTask ? 'Eliminando...' : 'Eliminar'"
+    [cancelText]="'Cancelar'"
+    (close)="onCancelDeleteTask()"
+    (confirm)="!deletingTask && onConfirmDeleteTask()"
+    (cancel)="onCancelDeleteTask()">
+    
+    <div class="delete-confirmation">
+      <div class="confirmation-icon delete-icon">
+        <span class="material-icons">delete_forever</span>
+      </div>
+      <h3>¿Eliminar esta tarea?</h3>
+      <p>Esta acción no se puede deshacer. La tarea será marcada como eliminada.</p>
+      <div class="warning-note">
+        <span class="material-icons">warning</span>
+        <span>Esta es una eliminación permanente del sistema.</span>
+      </div>
+      
+      <!-- Loading indicator en el modal -->
+      <div *ngIf="deletingTask" class="deleting-indicator">
+        <div class="spinner"></div>
+        <span>Procesando eliminación...</span>
+      </div>
+    </div>
+  </app-modal>
+
+  <!-- Edit Task Modal -->
+  <app-edit-task-modal
+    [isOpen]="isEditModalVisible"
+    [task]="taskToEdit"
+    [loading]="editingTask"
+    (close)="onCloseEditModal()"
+    (saveTask)="onSaveEditTask($event)">
+  </app-edit-task-modal>
+
+  <!-- Logout Confirmation Modal -->
+  <app-modal 
+    [title]="'Confirmación de Cierre de Sesión'" 
+    [visible]="isModalVisible"
+    [confirmText]="'Cerrar Sesión'"
+    [cancelText]="'Cancelar'"
+    (close)="onModalClose()"
+    (confirm)="onConfirmLogout()"
+    (cancel)="onTaskModalClose()">
+    
+    <div class="logout-confirmation">
+      <div class="confirmation-icon">
+        <span class="material-icons">logout</span>
+      </div>
+      <p>¿Estás seguro de que deseas cerrar sesión?</p>
+      <p class="confirmation-note">Se perderán todos los cambios no guardados.</p>
+    </div>
+  </app-modal>
+
+
+</div>

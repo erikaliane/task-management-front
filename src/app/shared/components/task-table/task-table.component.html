@@ -1,0 +1,149 @@
+<div class="task-table-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="table-loading">
+    <div class="loading-table">
+      <div class="loading-header"></div>
+      <div *ngFor="let i of [1,2,3,4,5]" class="loading-row">
+        <div *ngFor="let j of [1,2,3,4,5,6,7]" class="loading-cell"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table View -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="task-table">
+      <!-- Table Header -->
+      <thead>
+        <tr>
+          <th (click)="sortBy('taskId')" class="sortable">
+            ID
+            <span class="sort-icon material-icons" 
+                  [class.active]="sortColumn === 'taskId'"
+                  [class.desc]="sortColumn === 'taskId' && sortDirection === 'desc'">
+              arrow_upward
+            </span>
+          </th>
+          <th (click)="sortBy('title')" class="sortable">
+            Título
+            <span class="sort-icon material-icons" 
+                  [class.active]="sortColumn === 'title'"
+                  [class.desc]="sortColumn === 'title' && sortDirection === 'desc'">
+              arrow_upward
+            </span>
+          </th>
+          <th (click)="sortBy('status')" class="sortable">
+            Estado
+            <span class="sort-icon material-icons" 
+                  [class.active]="sortColumn === 'status'"
+                  [class.desc]="sortColumn === 'status' && sortDirection === 'desc'">
+              arrow_upward
+            </span>
+          </th>
+          <th (click)="sortBy('priority')" class="sortable">
+            Prioridad
+            <span class="sort-icon material-icons" 
+                  [class.active]="sortColumn === 'priority'"
+                  [class.desc]="sortColumn === 'priority' && sortDirection === 'desc'">
+              arrow_upward
+            </span>
+          </th>
+          <th (click)="sortBy('assignedFirstName')" class="sortable">
+            Asignado a
+            <span class="sort-icon material-icons" 
+                  [class.active]="sortColumn === 'assignedFirstName'"
+                  [class.desc]="sortColumn === 'assignedFirstName' && sortDirection === 'desc'">
+              arrow_upward
+            </span>
+          </th>
+          <th (click)="sortBy('dueDate')" class="sortable">
+            Fecha límite
+            <span class="sort-icon material-icons" 
+                  [class.active]="sortColumn === 'dueDate'"
+                  [class.desc]="sortColumn === 'dueDate' && sortDirection === 'desc'">
+              arrow_upward
+            </span>
+          </th>
+          <th class="actions-header">Acciones</th>
+        </tr>
+      </thead>
+
+      <!-- Table Body -->
+      <tbody>
+        <tr *ngFor="let task of tasks" class="task-row">
+          <!-- ID -->
+          <td class="task-id-cell" data-label="ID">
+            <span class="task-id">#{{ task.taskId }}</span>
+          </td>
+
+          <!-- Title & Description -->
+          <td class="task-title-cell" data-label="Título">
+            <div class="title-content">
+              <h4 class="task-title">{{ task.title }}</h4>
+              <p class="task-description">{{ task.description }}</p>
+            </div>
+          </td>
+
+          <!-- Status -->
+          <td class="status-cell" data-label="Estado">
+            <span class="status-badge" [style.background-color]="getStatusColor(task.status)">
+              {{ task.status }}
+            </span>
+          </td>
+
+          <!-- Priority -->
+          <td class="priority-cell" data-label="Prioridad">
+            <span class="priority-badge" [style.background-color]="getPriorityColor(task.priority)">
+              {{ task.priority }}
+            </span>
+          </td>
+
+          <!-- Assigned To -->
+          <td class="assignee-cell" data-label="Asignado a">
+            <div class="assignee-info">
+              <span class="material-icons">person</span>
+              <span>{{ task.assignedFirstName }} {{ task.assignedLastName }}</span>
+            </div>
+          </td>
+
+          <!-- Due Date -->
+          <td class="due-date-cell" data-label="Fecha límite">
+            <div class="date-info" 
+                 [class.overdue]="isOverdue(task.dueDate)"
+                 [class.due-soon]="isDueSoon(task.dueDate)">
+              <span class="material-icons">schedule</span>
+              <span>{{ task.dueDate | date:'dd/MM/yyyy' }}</span>
+              <span *ngIf="isOverdue(task.dueDate)" class="overdue-text">
+                ({{ getDaysUntilDue(task.dueDate) < 0 ? -getDaysUntilDue(task.dueDate) : getDaysUntilDue(task.dueDate) }} días vencida)
+              </span>
+              <span *ngIf="isDueSoon(task.dueDate)" class="due-soon-text">
+                ({{ getDaysUntilDue(task.dueDate) }} días restantes)
+              </span>
+            </div>
+          </td>
+
+          <!-- Actions -->
+          <td class="actions-cell" data-label="Acciones">
+            <div class="task-actions">
+              <button class="action-btn view-btn" (click)="onTaskView(task)" title="Ver detalles">
+                <span class="material-icons">visibility</span>
+              </button>
+              <button class="action-btn edit-btn" (click)="onTaskEdit(task)" title="Editar">
+                <span class="material-icons">edit</span>
+              </button>
+              <button class="action-btn delete-btn" (click)="onTaskDelete(task.taskId)" title="Eliminar">
+                <span class="material-icons">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div *ngIf="tasks.length === 0" class="empty-table">
+      <span class="material-icons">table_view</span>
+      <h3>No hay tareas para mostrar</h3>
+      <p>Crea una nueva tarea para comenzar</p>
+    </div>
+  </div>
+</div>

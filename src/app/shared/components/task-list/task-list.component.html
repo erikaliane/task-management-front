@@ -1,0 +1,149 @@
+<div class="task-list-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="list-loading">
+    <div class="loading-controls"></div>
+    <div class="loading-groups">
+      <div *ngFor="let i of [1,2,3]" class="loading-group">
+        <div class="loading-group-header"></div>
+        <div *ngFor="let j of [1,2,3,4]" class="loading-list-item"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- List View -->
+  <div *ngIf="!loading" class="task-list-view">
+    <!-- List Controls -->
+    <div class="list-controls">
+      <div class="control-group">
+        <label>Agrupar por:</label>
+        <select class="control-select" [(ngModel)]="groupBy" (change)="onGroupByChange($any($event.target).value)">
+          <option value="none">Sin agrupar</option>
+          <option value="status">Estado</option>
+          <option value="priority">Prioridad</option>
+          <option value="assignee">Asignado a</option>
+          <option value="dueDate">Fecha de vencimiento</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>Ordenar por:</label>
+        <select class="control-select" [(ngModel)]="sortBy" (change)="onSortByChange($any($event.target).value)">
+          <option value="dueDate">Fecha límite</option>
+          <option value="priority">Prioridad</option>
+          <option value="title">Título</option>
+          <option value="status">Estado</option>
+        </select>
+      </div>
+
+      <button class="sort-direction-btn" (click)="toggleSortDirection()" 
+              [title]="'Ordenar ' + (sortDirection === 'asc' ? 'descendente' : 'ascendente')">
+        <span class="material-icons">
+          {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+        </span>
+      </button>
+    </div>
+
+    <!-- Grouped Tasks -->
+    <div class="grouped-tasks">
+      <div *ngFor="let group of groupedTasks | keyvalue" class="task-group">
+        <!-- Group Header -->
+        <div class="group-header">
+          <div class="group-info">
+            <span class="group-icon material-icons" [style.color]="getGroupColor(group.key)">
+              {{ getGroupIcon(group.key) }}
+            </span>
+            <h3 class="group-title">{{ group.key }}</h3>
+            <span class="group-count">({{ group.value.length }})</span>
+          </div>
+        </div>
+
+        <!-- Group Tasks -->
+        <div class="group-tasks">
+          <div *ngFor="let task of group.value" 
+               class="list-task-item"
+               [class.overdue]="isOverdue(task.dueDate)"
+               [class.due-soon]="isDueSoon(task.dueDate)">
+            
+            <!-- Task Main Info -->
+            <div class="task-main-info">
+              <div class="task-header">
+                <span class="task-id">#{{ task.taskId }}</span>
+                <div class="task-badges">
+                  <span class="status-badge" [style.background-color]="getStatusColor(task.status)">
+                    {{ task.status }}
+                  </span>
+                  <span class="priority-badge" [style.background-color]="getPriorityColor(task.priority)">
+                    {{ task.priority }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="task-content">
+                <h4 class="task-title">{{ task.title }}</h4>
+                <p class="task-description">{{ task.description }}</p>
+              </div>
+            </div>
+
+            <!-- Task Meta Info -->
+            <div class="task-meta-info">
+              <div class="meta-item assignee">
+                <span class="material-icons">person</span>
+                <div class="meta-content">
+                  <span class="meta-label">Asignado a:</span>
+                  <span class="meta-value">{{ task.assignedFirstName }} {{ task.assignedLastName }}</span>
+                </div>
+              </div>
+
+              <div class="meta-item due-date" 
+                   [class.overdue]="isOverdue(task.dueDate)"
+                   [class.due-soon]="isDueSoon(task.dueDate)">
+                <span class="material-icons">schedule</span>
+                <div class="meta-content">
+                  <span class="meta-label">Fecha límite:</span>
+                  <span class="meta-value">{{ task.dueDate | date:'dd/MM/yyyy' }}</span>
+                  <span *ngIf="isOverdue(task.dueDate)" class="status-text overdue">
+                    (Vencida hace {{ -getDaysUntilDue(task.dueDate) }} días)
+                  </span>
+                  <span *ngIf="isDueSoon(task.dueDate)" class="status-text due-soon">
+                    (Vence en {{ getDaysUntilDue(task.dueDate) }} días)
+                  </span>
+                </div>
+              </div>
+
+              <div class="meta-item dates">
+                <span class="material-icons">event</span>
+                <div class="meta-content">
+                  <span class="meta-label">Creada:</span>
+                  <span class="meta-value">{{ task.createdAt | date:'dd/MM/yyyy' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task Actions -->
+            <div class="task-actions">
+              <button class="action-btn view-btn" (click)="onTaskView(task)" title="Ver detalles">
+                <span class="material-icons">visibility</span>
+                <span class="btn-text">Ver</span>
+              </button>
+              <button class="action-btn edit-btn" (click)="onTaskEdit(task)" title="Editar">
+                <span class="material-icons">edit</span>
+                <span class="btn-text">Editar</span>
+              </button>
+              <button class="action-btn delete-btn" (click)="onTaskDelete(task.taskId)" title="Eliminar">
+                <span class="material-icons">delete</span>
+                <span class="btn-text">Eliminar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="tasks.length === 0" class="empty-list">
+      <span class="material-icons">list_alt</span>
+      <h3>No hay tareas para mostrar</h3>
+      <p>Crea una nueva tarea para comenzar</p>
+    </div>
+  </div>
+</div>

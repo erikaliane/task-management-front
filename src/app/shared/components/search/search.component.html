@@ -1,1 +1,130 @@
-<p>search works!</p>
+<div class="search-container" [class]="'search-' + size">
+  <!-- Main Search Bar -->
+  <div class="search-bar">
+    <div class="search-input-group">
+      <span class="search-icon material-icons">search</span>
+      
+      <input 
+        #searchInput
+        type="text" 
+        class="search-input"
+        [placeholder]="placeholder"
+        [(ngModel)]="searchTerm"
+        (input)="onSearchInput()"
+        autocomplete="off">
+      
+      <button 
+        *ngIf="showClearButton && searchTerm"
+        class="clear-button"
+        (click)="clearSearch()"
+        type="button">
+        <span class="material-icons">close</span>
+      </button>
+
+      <div class="search-divider" *ngIf="showAdvancedFilters"></div>
+
+      <button 
+        *ngIf="showAdvancedFilters"
+        class="filter-button"
+        [class.active]="showFilters"
+        (click)="toggleFilters()"
+        type="button">
+        <span class="material-icons">tune</span>
+        <span class="filter-text">Filtros</span>
+      </button>
+    </div>
+
+    <!-- Search Shortcuts -->
+    <div class="search-shortcuts">
+      <kbd class="shortcut">Ctrl + F</kbd>
+    </div>
+  </div>
+
+  <!-- Advanced Filters -->
+  <div class="filters-panel" [class.show]="showFilters" *ngIf="showAdvancedFilters">
+    <div class="filters-header">
+      <h3>Filtros Avanzados</h3>
+      <button class="close-filters" (click)="toggleFilters()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="filters-content">
+      <div class="filter-group" *ngFor="let filter of filters">
+        <label class="filter-label">{{ filter.label }}</label>
+        
+        <!-- Text Input Filter -->
+        <input 
+          *ngIf="filter.type === 'text'"
+          type="text"
+          class="filter-input"
+          [placeholder]="filter.placeholder"
+          [(ngModel)]="selectedFilters[filter.key]">
+
+        <!-- Select Filter -->
+        <select 
+          *ngIf="filter.type === 'select'"
+          class="filter-select"
+          [(ngModel)]="selectedFilters[filter.key]">
+          <option value="">Seleccionar...</option>
+          <option *ngFor="let option of filter.options" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+
+        <!-- Date Range Filter -->
+        <div *ngIf="filter.type === 'dateRange'" class="date-range">
+          <input 
+            type="date"
+            class="filter-input date-input"
+            placeholder="Desde"
+            [(ngModel)]="selectedFilters[filter.key + '_from']">
+          <span class="date-separator">hasta</span>
+          <input 
+            type="date"
+            class="filter-input date-input"
+            placeholder="Hasta"
+            [(ngModel)]="selectedFilters[filter.key + '_to']">
+        </div>
+
+        <!-- Checkbox Filter -->
+        <div *ngIf="filter.type === 'checkbox'" class="checkbox-group">
+          <label *ngFor="let option of filter.options" class="checkbox-label">
+            <input 
+              type="checkbox"
+              [value]="option.value"
+              [(ngModel)]="selectedFilters[filter.key + '_' + option.value]">
+            <span class="checkmark"></span>
+            {{ option.label }}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="filters-footer">
+      <button class="btn btn-secondary" (click)="resetFilters()">
+        <span class="material-icons">refresh</span>
+        Limpiar
+      </button>
+      <button class="btn btn-primary" (click)="applyFilters()">
+        <span class="material-icons">check</span>
+        Aplicar Filtros
+      </button>
+    </div>
+  </div>
+
+  <!-- Active Filters Display -->
+  <div class="active-filters" *ngIf="hasActiveFilters()">
+    <span class="active-filters-label">Filtros activos:</span>
+    <div class="filter-tags">
+      <span 
+        *ngFor="let filter of getActiveFilters()"
+        class="filter-tag">
+        {{ filter.label }}: {{ filter.value }}
+        <button (click)="removeFilter(filter.key)">
+          <span class="material-icons">close</span>
+        </button>
+      </span>
+    </div>
+  </div>
+</div>

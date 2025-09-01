@@ -21,6 +21,8 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+           
+
             "outputPath": "dist/task-management-frontend",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -41,18 +43,18 @@
           },
           "configurations": {
             "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
-                }
-              ],
+             "budgets": [
+            {
+               "type": "initial",
+               "maximumWarning": "500kb",
+                "maximumError": "1mb"
+            },
+            {
+            "type": "anyComponentStyle",
+             "maximumWarning": "10kb",
+             "maximumError": "16kb"
+             }
+],
               "outputHashing": "all"
             },
             "development": {

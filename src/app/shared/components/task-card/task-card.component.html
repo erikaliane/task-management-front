@@ -1,0 +1,49 @@
+<div class="task-card" [class.overdue]="isOverdue()" [class.due-soon]="isDueSoon()">
+  <!-- Card Header -->
+  <div class="card-header">
+    <div class="task-priority" [style.background-color]="getPriorityColor()">
+      {{ getPriorityText() }}
+    </div>
+    <div class="task-actions" *ngIf="showActions">
+      <button class="action-btn" (click)="onEdit()" title="Editar tarea">
+        <span class="material-icons">edit</span>
+      </button>
+      <button class="action-btn delete" (click)="onDelete()" title="Eliminar tarea">
+        <span class="material-icons">delete</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Card Content -->
+  <div class="card-content" (click)="onViewDetails()">
+    <h3 class="task-title">{{ task.title }}</h3>
+    <p class="task-description">{{ task.description }}</p>
+    
+    <!-- Task Meta Info -->
+    <div class="task-meta">
+      <div class="meta-item">
+        <span class="material-icons">person</span>
+        <span>{{ task.assignedFirstName }} {{ task.assignedLastName }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="material-icons">schedule</span>
+        <span>{{ task.dueDate | date:'dd/MM/yyyy' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Footer -->
+  <div class="card-footer">
+    <div class="task-status" [style.background-color]="getStatusColor()">
+      {{ getStatusText() }}
+    </div>
+    <div class="due-date-info" *ngIf="!isOverdue() && getDaysUntilDue() <= 7">
+      <span class="material-icons">timer</span>
+      <span>{{ getDaysUntilDue() }} días restantes</span>
+    </div>
+    <div class="overdue-info" *ngIf="isOverdue()">
+      <span class="material-icons">warning</span>
+      <span>Vencida hace {{ getAbsDaysUntilDue() }} días</span>
+    </div>
+  </div>
+</div>

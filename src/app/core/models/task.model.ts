@@ -1,35 +1,37 @@
-export interface Task {
+export interface User {
   id: number;
+  name: string;
+  email: string;
+  role: string;
+  avatar?: string;
+}
+
+export interface Task {
+  id?: number;
   title: string;
   description: string;
-  status: TaskStatus;
-  priority: TaskPriority;
-  assignedToId: number;
-  assignedTo?: User;
-  dueDate: string;
-  createdAt: string;
-  updatedAt: string;
-  isDeleted: boolean;
+  status: 'Pendiente' | 'En progreso' | 'Completada';
+  priority: 'Baja' | 'Media' | 'Alta';
+  dueDate: string; // ISO string format
+  assignedTo: number; // User ID
+  createdBy?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export enum TaskStatus {
-  PENDING = 'Pending',
-  IN_PROGRESS = 'InProgress',
-  COMPLETED = 'Completed'
-}
-
-export enum TaskPriority {
-  LOW = 'Low',
-  MEDIUM = 'Medium',
-  HIGH = 'High'
-}
-
-export interface CreateTaskRequest {
+export interface TaskFormData {
   title: string;
   description: string;
-  priority: TaskPriority;
-  assignedToId: number;
-  dueDate: string;
+  priority: 'Baja' | 'Media' | 'Alta'; // Formato del formulario
+  deadline: string; // Formato del input date
+  responsible: User; // Usuario completo del formulario
 }
 
-import { User } from './auth.model';
+export interface TaskCreateRequest {
+  title: string;
+  description: string;
+  status: 'Pendiente';
+  priority: 'Baja' | 'Media' | 'Alta';
+  dueDate: string; // ISO string
+  assignedTo: number;
+}

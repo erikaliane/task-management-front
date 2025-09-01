@@ -1,1 +1,83 @@
-<p>header works!</p>
+<header class="header">
+  <div class="header__container">
+    <!-- Logo y Brand -->
+    <div class="header__brand">
+      <div class="header__logo">
+        <div class="logo-icon">
+          <span class="material-icons">task_alt</span>
+        </div>
+        <span class="brand-text">TaskFlow</span>
+      </div>
+      <span class="brand-subtitle">Enterprise Task Management</span>
+    </div>
+
+    <!-- Search Bar (si está habilitado) -->
+    <div class="header__search" *ngIf="showSearch">
+      <div class="search-container">
+        <span class="material-icons search-icon">search</span>
+        <input 
+          type="text" 
+          placeholder="Buscar tareas, proyectos..." 
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          class="search-input">
+        <kbd class="search-shortcut">Ctrl + K</kbd>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="header__actions">
+      <!-- Notifications -->
+      <div class="action-item" *ngIf="showNotifications">
+        <button class="notification-btn">
+          <span class="material-icons">notifications</span>
+          <span class="notification-badge" *ngIf="notificationCount > 0">{{ notificationCount }}</span>
+        </button>
+      </div>
+
+      <!-- User Profile -->
+      <div class="action-item user-profile" (click)="toggleUserMenu()">
+        <div class="user-avatar">
+          <img [src]="userProfile?.avatar || 'assets/default-avatar.png'" 
+               [alt]="userProfile?.name || 'Usuario'">
+        </div>
+        <div class="user-info">
+          <span class="user-name">{{ userProfile?.name || 'Usuario' }}</span>
+          <span class="user-role">{{ userProfile?.role || 'Empleado' }}</span>
+        </div>
+        <span class="material-icons dropdown-icon">expand_more</span>
+
+        <!-- User Menu Dropdown -->
+        <div class="user-menu" [class.show]="showUserMenu">
+          <div class="user-menu__header">
+            <div class="user-avatar-large">
+              <img [src]="userProfile?.avatar || 'assets/default-avatar.png'" 
+                   [alt]="userProfile?.name || 'Usuario'">
+            </div>
+            <div class="user-details">
+              <h4>{{ userProfile?.name || 'Usuario' }}</h4>
+              <p>{{ userProfile?.email || 'usuario@empresa.com' }}</p>
+              <span class="role-badge">{{ userProfile?.role || 'Empleado' }}</span>
+            </div>
+          </div>
+          
+          <div class="user-menu__items">
+            <button class="menu-item" (click)="viewProfile()">
+              <span class="material-icons">person</span>
+              Mi Perfil
+            </button>
+            <button class="menu-item">
+              <span class="material-icons">settings</span>
+              Configuración
+            </button>
+            <div class="menu-divider"></div>
+            <button class="menu-item logout" (click)="logout()">
+              <span class="material-icons">logout</span>
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

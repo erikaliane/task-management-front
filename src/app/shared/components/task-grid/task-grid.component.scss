@@ -1,0 +1,158 @@
+.task-grid-container {
+  width: 100%;
+}
+
+.loading-grid,
+.tasks-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); // Exactamente 4 columnas en pantallas grandes
+  gap: 1.5rem;
+  padding: 0;
+  min-height: 600px; // Altura mínima para 2 filas completas
+}
+
+.skeleton-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 1.5rem;
+
+  .skeleton-header {
+    height: 24px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+
+  .skeleton-content {
+    .skeleton-line {
+      height: 16px;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 4px;
+      margin-bottom: 0.75rem;
+
+      &.short {
+        width: 60%;
+      }
+
+      &.medium {
+        width: 80%;
+      }
+    }
+  }
+}
+
+@keyframes loading {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+  .empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+
+    .material-icons {
+      font-size: 36px;
+      color: #9ca3af;
+    }
+  }
+
+  h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 1rem;
+  }
+}
+
+// Responsive design
+@media (min-width: 1200px) {
+  .loading-grid,
+  .tasks-grid {
+    grid-template-columns: repeat(4, 1fr); // 4 columnas en pantallas grandes
+    gap: 1.5rem;
+    min-height: 600px;
+  }
+}
+
+@media (max-width: 1199px) and (min-width: 768px) {
+  .loading-grid,
+  .tasks-grid {
+    grid-template-columns: repeat(3, 1fr); // 3 columnas en pantallas medianas
+    gap: 1.25rem;
+    min-height: 500px;
+  }
+}
+
+@media (max-width: 767px) and (min-width: 481px) {
+  .loading-grid,
+  .tasks-grid {
+    grid-template-columns: repeat(2, 1fr); // 2 columnas en pantallas pequeñas
+    gap: 1rem;
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-grid,
+  .tasks-grid {
+    grid-template-columns: 1fr; // 1 columna en pantallas muy pequeñas
+    gap: 1rem;
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .task-grid-container {
+    padding: 0 0.5rem;
+  }
+
+  .empty-state {
+    padding: 3rem 1.5rem;
+
+    .empty-icon {
+      width: 60px;
+      height: 60px;
+
+      .material-icons {
+        font-size: 28px;
+      }
+    }
+
+    h3 {
+      font-size: 1.25rem;
+    }
+  }
+}

@@ -1,0 +1,14 @@
+<div class="task-notification">
+  <div class="notification-content">
+    <div class="notification-icon">✔</div>
+    <div class="notification-text">
+      <h3>Tarea creada</h3>
+      <p>La tarea <strong>{{ taskTitle }}</strong> se ha creado.</p>
+    </div>
+    <div class="notification-actions">
+      <button class="notification-btn">Bandeja</button>
+      <button class="notification-btn" (click)="copyURL()">Copiar URL</button>
+      <button class="notification-btn primary">Abrir</button>
+    </div>
+  </div>
+</div>

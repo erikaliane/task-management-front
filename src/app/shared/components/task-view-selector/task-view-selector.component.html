@@ -1,0 +1,16 @@
+<div class="view-selector">
+  <div class="selector-label">
+    <span class="material-icons">visibility</span>
+    <span>Vista:</span>
+  </div>
+  <div class="view-options">
+    <button 
+      *ngFor="let option of viewOptions"
+      [class]="'view-option ' + (currentView === option.value ? 'active' : '')"
+      (click)="onViewChange(option.value)"
+      [title]="option.label">
+      <span class="material-icons">{{ option.icon }}</span>
+      <span class="option-label">{{ option.label }}</span>
+    </button>
+  </div>
+</div>

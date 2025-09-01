@@ -1,0 +1,184 @@
+<div class="task-calendar-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="calendar-loading">
+    <div class="loading-header"></div>
+    <div class="loading-grid">
+      <div *ngFor="let i of [1,2,3,4,5,6,7]" class="loading-day-header"></div>
+      <div *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42]" 
+           class="loading-day"></div>
+    </div>
+  </div>
+
+  <!-- Calendar View -->
+  <div *ngIf="!loading" class="calendar-view">
+    <!-- Calendar Header -->
+    <div class="calendar-header">
+      <div class="month-navigation">
+        <button class="nav-btn" (click)="previousMonth()" title="Mes anterior">
+          <span class="material-icons">chevron_left</span>
+        </button>
+        <h2 class="current-month">{{ currentMonthYear }}</h2>
+        <button class="nav-btn" (click)="nextMonth()" title="Siguiente mes">
+          <span class="material-icons">chevron_right</span>
+        </button>
+      </div>
+      
+      <div class="calendar-actions">
+        <button class="today-btn" (click)="goToToday()">
+          <span class="material-icons">today</span>
+          <span>Hoy</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="calendar-grid">
+      <!-- Day Headers -->
+      <div class="calendar-day-headers">
+        <div *ngFor="let dayName of dayNames" class="day-header">
+          {{ dayName }}
+        </div>
+      </div>
+
+      <!-- Calendar Weeks -->
+      <div class="calendar-weeks">
+        <div *ngFor="let week of calendarWeeks" class="calendar-week">
+          <div *ngFor="let day of week.days" 
+               class="calendar-day"
+               [class.other-month]="!day.isCurrentMonth"
+               [class.today]="day.isToday"
+               [class.weekend]="day.isWeekend"
+               [class.selected]="selectedDate && isSameDate(day.date, selectedDate)"
+               [class.has-tasks]="day.tasks.length > 0"
+               [class.has-overdue]="day.hasOverdue"
+               [class.has-due-soon]="day.hasDueSoon"
+               (click)="onDayClick(day)">
+            
+            <!-- Day Number -->
+            <div class="day-number">
+              {{ day.dayNumber }}
+            </div>
+
+            <!-- Task Indicators -->
+            <div class="task-indicators" *ngIf="day.tasks.length > 0">
+              <!-- High Priority Indicator -->
+              <div class="priority-indicator high-priority" 
+                   *ngIf="getHighPriorityCount(day) > 0"
+                   title="{{ getHighPriorityCount(day) }} tareas de alta prioridad">
+                <span class="material-icons">priority_high</span>
+              </div>
+
+              <!-- Task Count -->
+              <div class="task-count-indicator" 
+                   [title]="day.tasks.length + ' tareas programadas'">
+                {{ day.tasks.length }}
+              </div>
+
+              <!-- Task Dots (max 3 visible) -->
+              <div class="task-dots">
+                <div *ngFor="let task of day.tasks | slice:0:3" 
+                     class="task-dot"
+                     [style.background-color]="getStatusColor(task.status)"
+                     [title]="task.title + ' - ' + task.status">
+                </div>
+                <div *ngIf="day.tasks.length > 3" 
+                     class="more-tasks-indicator"
+                     [title]="'+' + (day.tasks.length - 3) + ' tareas más'">
+                  +{{ day.tasks.length - 3 }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Details Panel -->
+  <div class="task-details-panel" 
+       [class.visible]="showTaskDetails && selectedDate"
+       *ngIf="selectedDate">
+    
+    <div class="panel-header">
+      <div class="selected-date-info">
+        <h3>{{ selectedDate | date:'EEEE, dd MMMM yyyy':'es' }}</h3>
+        <span class="task-count">{{ selectedDateTasks.length }} tarea(s)</span>
+      </div>
+      <button class="close-btn" (click)="closeTaskDetails()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="panel-content">
+      <!-- No tasks message -->
+      <div *ngIf="selectedDateTasks.length === 0" class="no-tasks">
+        <span class="material-icons">event_available</span>
+        <p>No hay tareas programadas para esta fecha</p>
+      </div>
+
+      <!-- Task List -->
+      <div *ngIf="selectedDateTasks.length > 0" class="task-list">
+        <div *ngFor="let taskEvent of selectedDateTasks" 
+             class="task-item"
+             [class.overdue]="taskEvent.isOverdue"
+             [class.due-soon]="taskEvent.isDueSoon">
+          
+          <!-- Task Header -->
+          <div class="task-item-header">
+            <span class="task-id">#{{ taskEvent.task.taskId }}</span>
+            <div class="task-badges">
+              <span class="status-badge" [style.background-color]="getStatusColor(taskEvent.task.status)">
+                {{ taskEvent.task.status }}
+              </span>
+              <span class="priority-badge" [style.background-color]="getPriorityColor(taskEvent.task.priority)">
+                {{ taskEvent.task.priority }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Task Content -->
+          <div class="task-item-content">
+            <h4 class="task-title">{{ taskEvent.task.title }}</h4>
+            <p class="task-description">{{ taskEvent.task.description }}</p>
+            
+            <!-- Task Meta -->
+            <div class="task-meta">
+              <div class="assignee">
+                <span class="material-icons">person</span>
+                <span>{{ taskEvent.task.assignedFirstName }} {{ taskEvent.task.assignedLastName }}</span>
+              </div>
+              
+              <div class="due-status" 
+                   [class.overdue]="taskEvent.isOverdue"
+                   [class.due-soon]="taskEvent.isDueSoon">
+                <span class="material-icons">schedule</span>
+                <span *ngIf="taskEvent.isOverdue">
+                  Vencida hace {{ -taskEvent.daysUntilDue }} días
+                </span>
+                <span *ngIf="taskEvent.isDueSoon && !taskEvent.isOverdue">
+                  Vence en {{ taskEvent.daysUntilDue }} días
+                </span>
+                <span *ngIf="!taskEvent.isOverdue && !taskEvent.isDueSoon">
+                  Fecha límite: {{ taskEvent.task.dueDate | date:'dd/MM/yyyy' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Task Actions -->
+          <div class="task-item-actions">
+            <button class="action-btn view-btn" (click)="onTaskView(taskEvent.task)" title="Ver detalles">
+              <span class="material-icons">visibility</span>
+            </button>
+            <button class="action-btn edit-btn" (click)="onTaskEdit(taskEvent.task)" title="Editar">
+              <span class="material-icons">edit</span>
+            </button>
+            <button class="action-btn delete-btn" (click)="onTaskDelete(taskEvent.task.taskId)" title="Eliminar">
+              <span class="material-icons">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

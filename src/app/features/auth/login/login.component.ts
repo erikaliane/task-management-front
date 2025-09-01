@@ -50,12 +50,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSubmit(): void {
+onSubmit(): void {
     this.errorMessage = '';
 
     if (this.loginForm.valid) {
       this.loading = true;
-      
+
       this.authService.login(this.loginForm.value)
         .pipe(
           takeUntil(this.destroy$),
@@ -65,18 +65,11 @@ export class LoginComponent implements OnInit, OnDestroy {
           next: (response) => {
             console.log('✅ Login exitoso:', response);
             this.tokenService.setToken(response.token);
-            
-            // Micro-interacción de éxito
-            this.showSuccessMessage(response.user.firstName, response.user.role);
-            
-            // Redirigir después de mostrar el mensaje
-            setTimeout(() => {
-              this.router.navigate(['/tasks']);
-            }, 1500);
+            this.authService.redirectByRole(); // Redirige según el rol
           },
           error: (error) => {
             console.error('❌ Error de login:', error);
-            this.errorMessage = 'Credenciales incorrectas. Por favor, verifica tu información.';
+            this.errorMessage = error.message || 'Error de conexión. Intenta nuevamente.';
             this.shakeForm();
           }
         });
@@ -84,9 +77,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.markFormGroupTouched();
       this.shakeForm();
     }
-  }
+}
 
-  private showSuccessMessage(firstName: string, role: string): void {
+  private showSuccessMessage(message: string): void {
     // Crear notificación temporal de éxito
     const successDiv = document.createElement('div');
     successDiv.className = 'success-notification';
@@ -95,7 +88,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         <div class="success-icon">✓</div>
         <div class="success-text">
           <h3>¡Bienvenido!</h3>
-          <p>${firstName} • ${role}</p>
+          <p>${message}</p>
         </div>
       </div>
     `;

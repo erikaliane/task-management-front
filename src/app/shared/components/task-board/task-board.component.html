@@ -1,0 +1,89 @@
+<div class="task-board-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="board-loading">
+    <div class="loading-columns">
+      <div *ngFor="let i of [1,2,3,4]" class="loading-column">
+        <div class="loading-header"></div>
+        <div class="loading-cards">
+          <div *ngFor="let j of [1,2,3]" class="loading-card"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Board View -->
+  <div *ngIf="!loading" class="task-board">
+    <div *ngFor="let column of columns" 
+         class="board-column"
+         [style.border-top-color]="column.color">
+      
+      <!-- Column Header -->
+      <div class="column-header">
+        <div class="column-title">
+          <span class="status-indicator" [style.background-color]="column.color"></span>
+          <h3>{{ column.title }}</h3>
+          <span class="task-count">({{ column.tasks.length }})</span>
+        </div>
+      </div>
+
+      <!-- Column Content -->
+      <div class="column-content"
+           (drop)="onTaskDrop($event, column.status)"
+           (dragover)="$event.preventDefault()">
+        
+        <!-- Empty State -->
+        <div *ngIf="column.tasks.length === 0" class="empty-column">
+          <span class="material-icons">task_alt</span>
+          <p>No hay tareas {{ column.title.toLowerCase() }}</p>
+        </div>
+
+        <!-- Task Cards -->
+        <div *ngFor="let task of column.tasks" 
+             class="board-task-card"
+             draggable="true"
+             (dragstart)="onTaskDragStart($event, task)">
+          
+          <!-- Task Header -->
+          <div class="task-header">
+            <span class="task-id">#{{ task.taskId }}</span>
+            <span class="priority-indicator" 
+                  [style.background-color]="getPriorityColor(task.priority)">
+              {{ task.priority }}
+            </span>
+          </div>
+
+          <!-- Task Content -->
+          <div class="task-content">
+            <h4 class="task-title">{{ task.title }}</h4>
+            <p class="task-description">{{ task.description }}</p>
+          </div>
+
+          <!-- Task Meta -->
+          <div class="task-meta">
+            <div class="assignee">
+              <span class="material-icons">person</span>
+              <span>{{ task.assignedFirstName }} {{ task.assignedLastName }}</span>
+            </div>
+            <div class="due-date">
+              <span class="material-icons">schedule</span>
+              <span>{{ (task.dueDate | date:'dd/MM/yyyy') }}</span>
+            </div>
+          </div>
+
+          <!-- Task Actions -->
+          <div class="task-actions">
+            <button class="action-btn view-btn" (click)="onTaskView(task)" title="Ver detalles">
+              <span class="material-icons">visibility</span>
+            </button>
+            <button class="action-btn edit-btn" (click)="onTaskEdit(task)" title="Editar">
+              <span class="material-icons">edit</span>
+            </button>
+            <button class="action-btn delete-btn" (click)="onTaskDelete(task.taskId)" title="Eliminar">
+              <span class="material-icons">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

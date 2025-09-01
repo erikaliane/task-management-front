@@ -1,0 +1,298 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45); // Gris más claro
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  padding: 1rem;
+
+  &.show {
+    opacity: 1;
+    visibility: visible;
+
+    .modal-container {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+.modal-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-height: 70vh; // Reducido para menos altura
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.95) translateY(-20px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+
+  // Modal sizes - Más anchos
+  &.modal-sm {
+    max-width: 500px; // Más ancho
+  }
+
+  &.modal-md {
+    max-width: 700px; // Más ancho
+  }
+
+  &.modal-lg {
+    max-width: 900px; // Más ancho
+  }
+
+  &.modal-xl {
+    max-width: 1100px; // Más ancho
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1.5rem; // Padding más compacto
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #fafbfc, #f8fafc);
+  flex-shrink: 0; // No se encoge
+
+  .modal-title {
+    h2 {
+      margin: 0;
+      font-size: 1.125rem; // Más pequeño para ahorrar espacio
+      font-weight: 600;
+      color: #1f2937;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &::before {
+        content: '';
+        width: 3px;
+        height: 18px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 2px;
+      }
+    }
+  }
+
+  .close-button {
+    background: none;
+    border: none;
+    padding: 0.375rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #6b7280;
+    flex-shrink: 0; // No se encoge
+
+    .material-icons {
+      font-size: 18px;
+    }
+
+    &:hover {
+      background: #f3f4f6;
+      color: #374151;
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+.modal-body {
+  padding: 1.25rem 1.5rem; // Padding más compacto
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0; // Permite que se contraiga
+  
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 2px;
+    
+    &:hover {
+      background: #94a3b8;
+    }
+  }
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border-top: 1px solid #e5e7eb;
+
+  .default-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 1rem !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    padding: 1rem !important;
+    background-color: #f8fafc !important;
+    border-top: 1px solid #e5e7eb !important;
+  }
+
+  .btn {
+    padding: 0.5rem 1.25rem; // Padding más compacto
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    min-width: 80px;
+    height: 36px; // Altura fija para consistencia
+  }
+
+  .btn-secondary {
+    background-color: #e5e7eb;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    transition: background-color 0.3s, transform 0.2s;
+
+    &:hover {
+      background-color: #d1d5db;
+      transform: translateY(-2px);
+    }
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    transition: background-color 0.3s, transform 0.2s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+}
+
+// Animation for modal entrance
+@keyframes modalSlideIn {
+  from {
+    transform: scale(0.9) translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+// Global styles for when modal is open
+:global(body.modal-open) {
+  overflow: hidden;
+}
+
+// Responsive design
+@media (max-width: 1024px) {
+  .modal-container {
+    &.modal-lg,
+    &.modal-xl {
+      max-width: 95%;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+
+  .modal-container {
+    max-height: 80vh; // Más altura en móvil
+    
+    &.modal-sm,
+    &.modal-md,
+    &.modal-lg,
+    &.modal-xl {
+      max-width: 100%;
+      margin: 0;
+    }
+  }
+
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+
+    .default-actions {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-container {
+    max-height: 85vh;
+  }
+
+  .modal-header {
+    padding: 0.75rem 1rem;
+    
+    .modal-title h2 {
+      font-size: 1rem;
+    }
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .modal-footer {
+    padding: 0.75rem 1rem;
+  }
+}
+
+// Utility class for compact content
+.modal-compact {
+  .modal-body {
+    padding: 1rem 1.5rem;
+  }
+}

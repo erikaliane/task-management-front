@@ -1,1 +1,80 @@
-<p>pagination works!</p>
+<div class="pagination-container" *ngIf="calculatedTotalPages > 0">
+  <!-- Pagination Info -->
+  <div class="pagination-info" *ngIf="showInfo">
+    <div class="items-info">
+      <span>Mostrando {{ getStartItem() }} - {{ getEndItem() }} de {{ getTotalItems() }} elementos</span>
+    </div>
+    
+    <div class="items-per-page">
+      <label>Elementos por página:</label>
+      <select 
+        class="items-select"
+        [value]="itemsPerPage"
+        (change)="onItemsPerPageChange(+$any($event.target).value)">
+        <option *ngFor="let option of itemsPerPageOptions" [value]="option">
+          {{ option }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="pagination-controls">
+    <!-- First Page -->
+    <button 
+      *ngIf="showFirstLast && currentPage > 2"
+      class="page-btn first-btn"
+      (click)="goToFirst()"
+      [disabled]="currentPage === 1">
+      <span class="material-icons">first_page</span>
+      <span class="btn-text">Primera</span>
+    </button>
+
+    <!-- Previous Page -->
+    <button 
+      *ngIf="showPrevNext"
+      class="page-btn prev-btn"
+      (click)="goToPrevious()"
+      [disabled]="currentPage === 1">
+      <span class="material-icons">chevron_left</span>
+      <span class="btn-text">Anterior</span>
+    </button>
+
+    <!-- Page Numbers -->
+    <div class="page-numbers">
+      <!-- Show ellipsis if there are pages before visible range -->
+      <span *ngIf="visiblePages.length > 0 && visiblePages[0] > 1" class="ellipsis">...</span>
+      
+      <button 
+        *ngFor="let page of visiblePages"
+        class="page-btn page-number"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)">
+        {{ page }}
+      </button>
+      
+      <!-- Show ellipsis if there are pages after visible range -->
+      <span *ngIf="visiblePages.length > 0 && visiblePages[visiblePages.length - 1] < calculatedTotalPages" class="ellipsis">...</span>
+    </div>
+
+    <!-- Next Page -->
+    <button 
+      *ngIf="showPrevNext"
+      class="page-btn next-btn"
+      (click)="goToNext()"
+      [disabled]="currentPage === calculatedTotalPages">
+      <span class="btn-text">Siguiente</span>
+      <span class="material-icons">chevron_right</span>
+    </button>
+
+    <!-- Last Page -->
+    <button 
+      *ngIf="showFirstLast && currentPage < calculatedTotalPages - 1"
+      class="page-btn last-btn"
+      (click)="goToLast()"
+      [disabled]="currentPage === calculatedTotalPages">
+      <span class="btn-text">Última</span>
+      <span class="material-icons">last_page</span>
+    </button>
+  </div>
+</div>

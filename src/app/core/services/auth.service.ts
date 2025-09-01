@@ -1,76 +1,80 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { Router } from '@angular/router';
+import { catchError, tap } from 'rxjs/operators';
 
-import { LoginRequest, LoginResponse, User, UserRole } from '../models/auth.model'; // ← Importar UserRole
+import {  UserRole } from '../models/auth.model';
 import { TokenService } from './token.service';
 
+
+import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private testUsers = {
-    'admin@test.com': {
-      password: 'Admin123!',
-      user: {
-        id: 1,
-        email: 'admin@test.com',
-        firstName: 'Admin',
-        lastName: 'User',
-        role: UserRole.ADMIN  
-      }
-    },
-    'employee@test.com': {
-      password: 'Employee123!',
-      user: {
-        id: 2,
-        email: 'employee@test.com',
-        firstName: 'Employee',
-        lastName: 'User',
-        role: UserRole.EMPLOYEE  
-      }
-    }
-  };
+private readonly API_URL = environment.apiUrl;
 
-  constructor(private tokenService: TokenService) {
-    console.log('🔐 AuthService: Servicio inicializado');
+  constructor(
+    private http: HttpClient,
+    private tokenService: TokenService,
+    private router: Router
+  ) {}
+
+  login(credentials: { email: string; password: string }): Observable<any> {
+    return this.http.post(`${this.API_URL}/auth/login`, credentials).pipe(
+      tap((response: any) => {
+        this.tokenService.setToken(response.token);
+        this.redirectByRole();
+      }),
+      catchError((error) => {
+        console.error('❌ Error en login:', error);
+        return throwError(() => new Error('Error de autenticación'));
+      })
+    );
   }
 
-  login(credentials: LoginRequest): Observable<LoginResponse> {
-    console.log('🚀 Intentando login con:', { email: credentials.email, password: '***' });
-    
-    const userData = this.testUsers[credentials.email as keyof typeof this.testUsers];
-    
-    if (userData && userData.password === credentials.password) {
-      // Login exitoso
-      const token = `fake-jwt-token-${Date.now()}`;
-      const response: LoginResponse = {
-        token,
-        user: userData.user,
-        message: 'Login exitoso'
-      };
-
-      console.log('✅ Login exitoso:', response.user);
-      return of(response).pipe(delay(1000)); // Simular latencia
-    } else {
-      // Login fallido
-      console.log('❌ Credenciales inválidas');
-      return throwError(() => new Error('Credenciales inválidas')).pipe(delay(1000));
-    }
+  logout(): void {
+    this.tokenService.removeToken();
+    this.router.navigate(['/auth/login']);
+    console.log('🚪 Sesión cerrada');
   }
 
   isAuthenticated(): boolean {
-    const isAuth = this.tokenService.isTokenValid();
-    console.log('🔍 ¿Está autenticado?', isAuth);
-    return isAuth;
+    return this.tokenService.isTokenValid();
   }
 
-  // Método adicional para verificar rol
-  isAdmin(user: User): boolean {
-    return user.role === UserRole.ADMIN;
+ 
+
+  isAdmin(): boolean {
+    const role = this.tokenService.getUserRole();
+    const isAdminUser = role === UserRole.ADMIN;
+    console.log('👑 ¿Es admin?', isAdminUser);
+    return isAdminUser;
   }
 
-  isEmployee(user: User): boolean {
-    return user.role === UserRole.EMPLOYEE;
+  isEmployee(): boolean {
+    const role = this.tokenService.getUserRole();
+    const isEmployeeUser = role === UserRole.EMPLOYEE;
+    console.log('👤 ¿Es employee?', isEmployeeUser);
+    return isEmployeeUser;
+  }
+
+
+  redirectByRole(): void {
+    const role = this.tokenService.getUserRole();
+    if (role === 'Admin') {
+      this.router.navigate(['/admin/workspace']);
+    } else if (role === 'Employee') {
+      this.router.navigate(['/employee/my-tasks']);
+    } else {
+      this.router.navigate(['/auth/login']);
+    }
+  }
+
+  handleTokenExpiration(): void {
+    if (!this.isAuthenticated()) {
+      this.logout();
+    }
   }
 }
