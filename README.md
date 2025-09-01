@@ -1,27 +1,57 @@
-# TaskManagementFrontend
+# Frontend: Task Management System
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.11.
+## 📝 Descripción
+Este repositorio contiene el frontend del sistema de gestión de tareas. Está desarrollado con Angular 15 y utiliza Angular Material para el diseño de la interfaz de usuario. Este sistema permite a los administradores crear y gestionar tareas, y a los empleados ver las tareas asignadas a ellos.
 
-## Development server
+---
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## 🚀 Tecnologías Utilizadas
+- **Framework**: Angular 15
+- **Lenguaje**: TypeScript
+- **UI Framework**: Angular Material
+- **Diseño**: Responsive Design
 
-## Code scaffolding
+---
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## 🌐 Funcionalidades Principales
+- **Login/Logout**: Autenticación mediante JWT.
+- **Roles**:
+  - **Admin**: Ver, crear, editar, eliminar (soft delete) y asignar tareas.
+  - **Employee**: Ver tareas asignadas, filtrar por busqueda de título/descripción, ver detalles de una tarea.
+- **Gestión de Tareas**:
+  - Crear, listar, editar, eliminar, asignar tareas (Admin).
+  - Filtros por título y descripción (Employee).
 
-## Build
+---
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
+## 🌟 Instrucciones de Configuración
+### Variables de Entorno
+Crea un archivo `environment.ts` con las siguientes variables:
+```typescript
+export const environment = {
+  production: true,
+  API_URL: 'https://your-backend-api-url', // URL del backend
+};
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Instalación
+1. Clona el repositorio.
+2. Instala las dependencias:
+   ```
+   npm install
+   ```
+3. Levanta el servidor de desarrollo:
+   ```
+   ng serve
+   ```
 
-## Running end-to-end tests
+---
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## 🛠 Deploy
+El frontend está desplegado en **Vercel**. 
 
-## Further help
+---
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## 🔐 Notas de Seguridad
+- Todos los endpoints requieren un token JWT en el encabezado.
