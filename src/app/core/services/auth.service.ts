@@ -13,7 +13,7 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-private readonly API_URL = environment.apiUrl;
+private readonly API_URL = environment.API_URL;
 
   constructor(
     private http: HttpClient,

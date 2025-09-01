@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { environment } from '../../../environments/environment';
+import { environment } from '@envs/environment';
 import { ErrorHandlerService } from './error-handler.service';
 import { TokenService } from './token.service';
 
@@ -49,7 +49,7 @@ export interface TaskCreateRequest {
   providedIn: 'root'
 })
 export class TaskService {
-  private readonly API_URL = environment.apiUrl || 'http://localhost:5137/api';
+  private readonly API_URL = environment.API_URL ;
 
   constructor(
     private http: HttpClient,
