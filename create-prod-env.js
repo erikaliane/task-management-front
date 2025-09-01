@@ -27,7 +27,15 @@ if (!fs.existsSync(envDir)) {
 // Obtener API_URL del .env o usar valor por defecto
 const apiUrl = process.env.API_URL || envVars.API_URL || 'http://localhost:5137/api';
 
-// Contenido del archivo environment.prod.ts
+// Crear environment.ts (archivo base)
+const baseEnvContent = `export const environment = {
+  production: false,
+  API_URL: '${apiUrl}',
+  tokenKey: 'task_management_token',
+  appName: 'TaskFlow'
+};`;
+
+// Crear environment.prod.ts (archivo de producción)
 const prodEnvContent = `export const environment = {
   production: true,
   API_URL: '${apiUrl}',
@@ -35,11 +43,15 @@ const prodEnvContent = `export const environment = {
   appName: 'TaskFlow'
 };`;
 
-// Escribir el archivo
+// Escribir ambos archivos
+const baseEnvPath = path.join(envDir, 'environment.ts');
 const prodEnvPath = path.join(envDir, 'environment.prod.ts');
+
+fs.writeFileSync(baseEnvPath, baseEnvContent);
 fs.writeFileSync(prodEnvPath, prodEnvContent);
 
-console.log('✅ Archivo environment.prod.ts creado exitosamente');
-console.log(`📍 Ubicación: ${prodEnvPath}`);
+console.log('✅ Archivos de environment creados exitosamente');
+console.log(`📍 Base: ${baseEnvPath}`);
+console.log(`📍 Prod: ${prodEnvPath}`);
 console.log(`🔗 API_URL configurada: ${apiUrl}`);
 console.log(`📄 Variables leídas del .env:`, envVars);
