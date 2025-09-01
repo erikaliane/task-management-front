@@ -83,11 +83,13 @@
         <div class="header-actions">
           <button class="btn btn-secondary" (click)="refreshWorkspace()">
             <span class="material-icons">refresh</span>
-            Actualizar
+            <span class="mobile-hidden">Actualizar</span>
+            <span class="desktop-hidden">Act.</span>
           </button>
           <button class="btn btn-primary" (click)="createNewTask()">
             <span class="material-icons">add</span>
-            Nueva Tarea
+            <span class="mobile-hidden">Nueva Tarea</span>
+            <span class="desktop-hidden">Nueva</span>
           </button>
         </div>
       </div>
@@ -109,6 +111,7 @@
           *ngIf="currentViewMode === 'cards'"
           [tasks]="paginatedTasks"
           [loading]="loading"
+          [showActions]="true"
           (editTask)="onEditTask($event)"
           (deleteTask)="onDeleteTask($event)"
           (viewDetails)="onViewTaskDetails($event)">
@@ -119,6 +122,7 @@
           *ngIf="currentViewMode === 'board'"
           [tasks]="filteredTasks"
           [loading]="loading"
+          [showActions]="true"
           (taskEdit)="onEditTask($event)"
           (taskDelete)="onDeleteTask($event)"
           (taskView)="onViewTaskDetails($event)"
@@ -130,6 +134,7 @@
           *ngIf="currentViewMode === 'table'"
           [tasks]="paginatedTasks"
           [loading]="loading"
+          [showActions]="true"
           (taskEdit)="onEditTask($event)"
           (taskDelete)="onDeleteTask($event)"
           (taskView)="onViewTaskDetails($event)">
@@ -140,6 +145,7 @@
           *ngIf="currentViewMode === 'calendar'"
           [tasks]="filteredTasks"
           [loading]="loading"
+          [showActions]="true"
           (taskEdit)="onEditTask($event)"
           (taskDelete)="onDeleteTask($event)"
           (taskView)="onViewTaskDetails($event)"
@@ -151,6 +157,7 @@
           *ngIf="currentViewMode === 'list'"
           [tasks]="paginatedTasks"
           [loading]="loading"
+          [showActions]="true"
           (taskEdit)="onEditTask($event)"
           (taskDelete)="onDeleteTask($event)"
           (taskView)="onViewTaskDetails($event)">
@@ -195,25 +202,14 @@
     size="lg">
   </app-loader>
 
-  <!-- ✨ NUEVO: Task Creation Modal -->
-<app-modal 
-  [title]="'Nueva Tarea'" 
-  [visible]="isTaskModalVisible"
-  [size]="'lg'"
-  [showFooter]="false"
-  [closeOnBackdropClick]="false"
-  (close)="onTaskModalClose()">
-  
-  <app-task-form
-    (onSubmit)="onTaskCreated($event)"
-    (onCancel)="onTaskModalClose()">
-  </app-task-form>
-
-  <div slot="footer">
-    <button class="btn btn-secondary" (click)="onTaskModalClose()">Cancelar</button>
-    <button class="btn btn-primary" (click)="onTaskFormSubmit()">Crear Tarea</button>
-  </div>
-  </app-modal>
+  <!-- ✨ Create Task Modal -->
+  <app-create-task-modal
+    [isOpen]="isTaskModalVisible"
+    [loading]="loading"
+    [showAssigneeField]="true"
+    (close)="onTaskModalClose()"
+    (createTask)="onTaskCreated($event)">
+  </app-create-task-modal>
 
   <!-- Delete Confirmation Modal -->
   <app-modal 

@@ -25,7 +25,8 @@
     <app-task-card
       *ngFor="let task of tasks; trackBy: trackByTaskId"
       [task]="task"
-      [showActions]="true"
+      [showActions]="showActions"
+      [hideAssignee]="hideAssignee"
       (editTask)="onEditTask($event)"
       (deleteTask)="onDeleteTask($event)"
       (viewDetails)="onViewDetails($event)">

@@ -20,7 +20,7 @@
           <option value="none">Sin agrupar</option>
           <option value="status">Estado</option>
           <option value="priority">Prioridad</option>
-          <option value="assignee">Asignado a</option>
+          <option value="assignee" *ngIf="!hideAssignee">Asignado a</option>
           <option value="dueDate">Fecha de vencimiento</option>
         </select>
       </div>
@@ -86,7 +86,7 @@
 
             <!-- Task Meta Info -->
             <div class="task-meta-info">
-              <div class="meta-item assignee">
+              <div class="meta-item assignee" *ngIf="!hideAssignee">
                 <span class="material-icons">person</span>
                 <div class="meta-content">
                   <span class="meta-label">Asignado a:</span>
@@ -125,11 +125,11 @@
                 <span class="material-icons">visibility</span>
                 <span class="btn-text">Ver</span>
               </button>
-              <button class="action-btn edit-btn" (click)="onTaskEdit(task)" title="Editar">
+              <button class="action-btn edit-btn" *ngIf="showActions" (click)="onTaskEdit(task)" title="Editar">
                 <span class="material-icons">edit</span>
                 <span class="btn-text">Editar</span>
               </button>
-              <button class="action-btn delete-btn" (click)="onTaskDelete(task.taskId)" title="Eliminar">
+              <button class="action-btn delete-btn" *ngIf="showActions" (click)="onTaskDelete(task.taskId)" title="Eliminar">
                 <span class="material-icons">delete</span>
                 <span class="btn-text">Eliminar</span>
               </button>

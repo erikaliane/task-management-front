@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { HeaderComponent } from './components/header/header.component';
@@ -16,6 +16,8 @@ import { TaskTableComponent } from './components/task-table/task-table.component
 import { TaskCalendarComponent } from './components/task-calendar/task-calendar.component';
 import { TaskListComponent } from './components/task-list/task-list.component';
 import { EditTaskModalComponent } from './components/edit-task-modal/edit-task-modal.component';
+import { TaskDetailsModalComponent } from './components/task-details-modal/task-details-modal.component';
+import { CreateTaskModalComponent } from './components/create-task-modal/create-task-modal.component';
 
 @NgModule({
   declarations: [
@@ -32,21 +34,27 @@ import { EditTaskModalComponent } from './components/edit-task-modal/edit-task-m
     TaskTableComponent,
     TaskCalendarComponent,
     TaskListComponent,
-    EditTaskModalComponent
+    EditTaskModalComponent,
+    TaskDetailsModalComponent,
+    CreateTaskModalComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule
   ],
+  providers: [
+    DatePipe
+  ],
   exports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     HeaderComponent,
     ModalComponent,
     PaginationComponent,
     SearchComponent,
     LoaderComponent,
-    FormsModule,
-    ReactiveFormsModule,
     NotificationComponent,
     TaskCardComponent,
     TaskViewSelectorComponent,
@@ -55,7 +63,9 @@ import { EditTaskModalComponent } from './components/edit-task-modal/edit-task-m
     TaskTableComponent,
     TaskCalendarComponent,
     TaskListComponent,
-    EditTaskModalComponent
+    EditTaskModalComponent,
+    TaskDetailsModalComponent,
+    CreateTaskModalComponent
   ]
 })
 export class SharedModule { }

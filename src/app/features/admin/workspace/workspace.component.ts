@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { ModalComponent } from './../../../shared/components/modal/modal.component'; // Asegúrate de que la ruta sea la correcta
-import { TaskService, Task, TaskUpdateData } from '../../../core/services/task.service';
+import { TaskService, Task, TaskUpdateData, TaskCreateData } from '../../../core/services/task.service';
 import { TaskFormComponent } from './components/task-form/task-form.component';
 
 export type ViewMode = 'cards' | 'table' | 'board' | 'list' | 'calendar';
@@ -338,8 +338,9 @@ constructor(private authService: AuthService, private cdr: ChangeDetectorRef, pr
         const taskData = {
           title: this.taskFormComponent.taskForm.value.title,
           description: this.taskFormComponent.taskForm.value.description,
+          status: 'Pendiente' as const,
           priority: this.taskFormComponent.taskForm.value.priority,
-          deadline: this.taskFormComponent.taskForm.value.deadline,
+          dueDate: this.taskFormComponent.taskForm.value.dueDate,
           assignedTo: Number(this.taskFormComponent.taskForm.value.assignedTo)
         };
 
@@ -367,16 +368,36 @@ constructor(private authService: AuthService, private cdr: ChangeDetectorRef, pr
     this.isTaskModalVisible = false;
   }
 
-
-onTaskCreated(taskData: any): void {
-  console.log('✅ Nueva tarea creada:', taskData);
-
-  // Cerrar el modal
-  this.isTaskModalVisible = false;
-
-  // Forzar la detección de cambios
-  this.cdr.detectChanges();
-}
+  onTaskCreated(taskData: TaskCreateData): void {
+    console.log('✅ Creando nueva tarea:', taskData);
+    this.loading = true;
+    
+    this.taskService.createTask(taskData).subscribe({
+      next: (response) => {
+        console.log('✅ Tarea creada exitosamente:', response);
+        this.isTaskModalVisible = false;
+        this.loading = false;
+        
+        // Reload tasks to show the new one
+        this.loadTasks();
+        
+        // Show success notification
+        this.showSuccessNotification('Tarea creada exitosamente');
+      },
+      error: (error) => {
+        console.error('❌ Error al crear la tarea:', error);
+        this.loading = false;
+        
+        // Handle validation errors from API
+        if (error.status === 400 && error.error) {
+          console.error('Errores de validación:', error.error);
+          this.showErrorNotification('Error de validación: Revisa los campos del formulario');
+        } else {
+          this.showErrorNotification('Error al crear la tarea. Inténtalo de nuevo.');
+        }
+      }
+    });
+  }
 
 
 
@@ -411,6 +432,32 @@ onTaskCreated(taskData: any): void {
         }
       }, 300);
     }, 4000);
+  }
+
+  private showErrorNotification(message: string): void {
+    const notification = document.createElement('div');
+    notification.className = 'error-notification';
+    notification.innerHTML = `
+      <div class="notification-content">
+        <span class="material-icons">error</span>
+        <span class="notification-message">${message}</span>
+        <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Remover notificación después de 5 segundos con animación
+    setTimeout(() => {
+      notification.style.animation = 'slideOutRight 0.3s ease-in forwards';
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
+      }, 300);
+    }, 5000);
   }
 
   // ===== LOGOUT MODAL METHODS =====

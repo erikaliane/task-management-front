@@ -31,6 +31,8 @@ interface TaskEvent {
 export class TaskCalendarComponent implements OnInit, OnChanges {
   @Input() tasks: Task[] = [];
   @Input() loading: boolean = false;
+  @Input() showActions: boolean = true;
+  @Input() hideAssignee: boolean = false;
   @Output() taskEdit = new EventEmitter<Task>();
   @Output() taskDelete = new EventEmitter<number>();
   @Output() taskView = new EventEmitter<Task>();

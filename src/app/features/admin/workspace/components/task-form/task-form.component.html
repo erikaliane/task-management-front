@@ -54,12 +54,12 @@
         </div>
         
         <div class="input-container">
-          <input type="date" formControlName="deadline" [min]="minDate.toISOString().split('T')[0]" 
+          <input type="date" formControlName="dueDate" [min]="minDate.toISOString().split('T')[0]" 
                  [max]="maxDate.toISOString().split('T')[0]">
         </div>
         
-        <div class="selected-date" *ngIf="taskForm.get('deadline')?.value">
-          {{ formatSelectedDate(taskForm.get('deadline')?.value) }}
+        <div class="selected-date" *ngIf="taskForm.get('dueDate')?.value">
+          {{ formatSelectedDate(taskForm.get('dueDate')?.value) }}
         </div>
       </div>
     </div>

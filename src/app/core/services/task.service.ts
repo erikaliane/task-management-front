@@ -9,8 +9,9 @@ import { TokenService } from './token.service';
 export interface TaskCreateData {
   title: string;
   description: string;
-  priority: 'baja' | 'media' | 'alta';
-  deadline: string;
+  status: 'Pendiente';
+  priority: 'Alta' | 'Media' | 'Baja';
+  dueDate: string;
   assignedTo: number;
 }
 
@@ -84,6 +85,33 @@ private readonly API_URL = `${environment.API_URL}/tasks`;
   }
 
   /**
+   * Obtener tareas asignadas a un usuario específico
+   */
+  getUserTasks(userId: number): Observable<Task[]> {
+    const headers = this.getAuthHeaders();
+    
+    return this.http.get<Task[]>(`${this.API_URL}/employee/user/${userId}`, { headers })
+      .pipe(
+        catchError(this.errorHandler.handleError('Ha ocurrido un error al obtener las tareas del usuario'))
+      );
+  }
+
+  /**
+   * Actualizar estado de tarea para empleados (solo status)
+   */
+  updateTaskStatus(taskId: number, status: string): Observable<any> {
+    const headers = this.getAuthHeaders();
+    const statusData = { status };
+    
+    console.log('🔄 Actualizando estado de tarea:', { taskId, status });
+    
+    return this.http.patch<any>(`${this.API_URL}/employee/task/${taskId}/status`, statusData, { headers })
+      .pipe(
+        catchError(this.errorHandler.handleError('Ha ocurrido un error al actualizar el estado de la tarea'))
+      );
+  }
+
+  /**
    * Eliminar tarea (soft delete)
    */
   deleteTask(taskId: number): Observable<any> {
@@ -112,19 +140,13 @@ private readonly API_URL = `${environment.API_URL}/tasks`;
    * Mapea los datos del formulario al formato de la API
    */
   private mapFormDataToCreateRequest(formData: TaskCreateData): TaskCreateRequest {
-    const priorityMap: { [key: string]: 'Baja' | 'Media' | 'Alta' } = {
-      'baja': 'Baja',
-      'media': 'Media', 
-      'alta': 'Alta'
-    };
-
-    const dueDate = new Date(formData.deadline + 'T12:00:00Z').toISOString();
+    const dueDate = new Date(formData.dueDate + 'T12:00:00Z').toISOString();
 
     return {
       title: formData.title,
       description: formData.description,
       status: 'Pendiente',
-      priority: priorityMap[formData.priority],
+      priority: formData.priority,
       dueDate: dueDate,
       assignedTo: formData.assignedTo
     };

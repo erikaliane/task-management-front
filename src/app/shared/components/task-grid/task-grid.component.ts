@@ -9,6 +9,8 @@ import { Task } from '../../../core/services/task.service';
 export class TaskGridComponent {
   @Input() tasks: Task[] = [];
   @Input() loading: boolean = false;
+  @Input() showActions: boolean = true;
+  @Input() hideAssignee: boolean = false;
   @Output() editTask = new EventEmitter<Task>();
   @Output() deleteTask = new EventEmitter<number>();
   @Output() viewDetails = new EventEmitter<Task>();

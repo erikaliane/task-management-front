@@ -31,8 +31,8 @@ export class TaskFormComponent implements OnInit {
 
     this.taskForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(100)]],
-      priority: ['media', Validators.required],
-      deadline: ['', Validators.required],
+      priority: ['Media', Validators.required],
+      dueDate: ['', Validators.required],
       description: ['', [Validators.required, Validators.maxLength(500)]],
       assignedTo: [null, Validators.required]
     });
@@ -78,6 +78,14 @@ export class TaskFormComponent implements OnInit {
     return this.taskForm.get('description');
   }
 
+  get priority() {
+    return this.taskForm.get('priority');
+  }
+
+  get dueDate() {
+    return this.taskForm.get('dueDate');
+  }
+
   get assignedTo() {
     return this.taskForm.get('assignedTo');
   }
@@ -90,8 +98,9 @@ export class TaskFormComponent implements OnInit {
       const taskData = {
         title: this.taskForm.value.title,
         description: this.taskForm.value.description,
+        status: 'Pendiente' as const,
         priority: this.taskForm.value.priority,
-        deadline: this.taskForm.value.deadline,
+        dueDate: this.taskForm.value.dueDate,
         assignedTo: Number(this.taskForm.value.assignedTo)
       };
 
@@ -125,7 +134,7 @@ export class TaskFormComponent implements OnInit {
    */
   resetForm(): void {
     this.taskForm.reset({
-      priority: 'media',
+      priority: 'Media',
       assignedTo: this.employees.length > 0 ? this.employees[0].userId : null
     });
   }
@@ -133,19 +142,19 @@ export class TaskFormComponent implements OnInit {
   // Métodos para las opciones de fecha rápida
   setToday(): void {
     const today = new Date();
-    this.taskForm.patchValue({ deadline: this.formatDateForInput(today) });
+    this.taskForm.patchValue({ dueDate: this.formatDateForInput(today) });
   }
 
   setTomorrow(): void {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    this.taskForm.patchValue({ deadline: this.formatDateForInput(tomorrow) });
+    this.taskForm.patchValue({ dueDate: this.formatDateForInput(tomorrow) });
   }
 
   setNextWeek(): void {
     const nextWeek = new Date();
     nextWeek.setDate(nextWeek.getDate() + 7);
-    this.taskForm.patchValue({ deadline: this.formatDateForInput(nextWeek) });
+    this.taskForm.patchValue({ dueDate: this.formatDateForInput(nextWeek) });
   }
 
   private formatDateForInput(date: Date): string {

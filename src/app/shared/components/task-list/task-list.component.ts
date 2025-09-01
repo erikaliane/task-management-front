@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { Task } from '../../../core/services/task.service';
 
 interface GroupedTasks {
@@ -10,9 +10,11 @@ interface GroupedTasks {
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.scss']
 })
-export class TaskListComponent {
+export class TaskListComponent implements OnChanges {
   @Input() tasks: Task[] = [];
   @Input() loading: boolean = false;
+  @Input() showActions: boolean = true;
+  @Input() hideAssignee: boolean = false;
   @Output() taskEdit = new EventEmitter<Task>();
   @Output() taskDelete = new EventEmitter<number>();
   @Output() taskView = new EventEmitter<Task>();
@@ -22,12 +24,21 @@ export class TaskListComponent {
   sortBy: 'dueDate' | 'priority' | 'title' | 'status' = 'dueDate';
   sortDirection: 'asc' | 'desc' = 'asc';
 
+  ngOnChanges(changes: SimpleChanges): void {
+    // If hideAssignee changes to true and current groupBy is 'assignee', switch to 'status'
+    if (changes['hideAssignee'] && this.hideAssignee && this.groupBy === 'assignee') {
+      this.groupBy = 'status';
+    }
+  }
+
   get groupedTasks(): GroupedTasks {
     if (this.groupBy === 'none') {
       return { 'Todas las tareas': this.sortedTasks };
     }
 
-    return this.groupTasksBy(this.groupBy);
+    // If hideAssignee is true and groupBy is 'assignee', default to 'status'
+    const effectiveGroupBy = (this.hideAssignee && this.groupBy === 'assignee') ? 'status' : this.groupBy;
+    return this.groupTasksBy(effectiveGroupBy);
   }
 
   get sortedTasks(): Task[] {
@@ -112,7 +123,12 @@ export class TaskListComponent {
   }
 
   onGroupByChange(groupBy: any): void {
-    this.groupBy = groupBy;
+    // If hideAssignee is true and user tries to select 'assignee', default to 'status'
+    if (this.hideAssignee && groupBy === 'assignee') {
+      this.groupBy = 'status';
+    } else {
+      this.groupBy = groupBy;
+    }
   }
 
   onSortByChange(sortBy: any): void {

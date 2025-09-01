@@ -1,0 +1,114 @@
+<app-modal 
+  [title]="'Detalles de la Tarea'" 
+  [visible]="isOpen"
+  [size]="'lg'"
+  [showFooter]="false"
+  (close)="onClose()">
+  
+  <div class="task-details" *ngIf="task">
+    <!-- Task Header -->
+    <div class="task-header">
+      <div class="task-title-section">
+        <h2 class="task-title">{{ task.title }}</h2>
+        <div class="task-badges">
+          <span class="badge" [ngClass]="getStatusClass(task.status)">
+            {{ task.status }}
+          </span>
+          <span class="badge" [ngClass]="getPriorityClass(task.priority)">
+            {{ task.priority }} prioridad
+          </span>
+          <span class="badge badge-overdue" *ngIf="isOverdue()">
+            <span class="material-icons">error</span>
+            Vencida
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task Content -->
+    <div class="task-content">
+      <!-- Description -->
+      <div class="field-group">
+        <label class="field-label">
+          <span class="material-icons">description</span>
+          Descripción
+        </label>
+        <div class="field-content">
+          <p class="task-description">{{ task.description }}</p>
+        </div>
+      </div>
+
+      <!-- Details Grid -->
+      <div class="details-grid">
+        <!-- Assigned To -->
+        <div class="field-group" *ngIf="!hideAssignee">
+          <label class="field-label">
+            <span class="material-icons">person</span>
+            Asignado a
+          </label>
+          <div class="field-content">
+            <div class="assigned-user">
+              <div class="user-avatar">
+                <span class="material-icons">account_circle</span>
+              </div>
+              <span class="user-name">{{ task.assignedFirstName }} {{ task.assignedLastName }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Due Date -->
+        <div class="field-group">
+          <label class="field-label">
+            <span class="material-icons">event</span>
+            Fecha límite
+          </label>
+          <div class="field-content">
+            <div class="due-date" [class.overdue]="isOverdue()">
+              <span class="date-text">{{ formatDate(task.dueDate) }}</span>
+              <span class="overdue-indicator" *ngIf="isOverdue()">
+                <span class="material-icons">warning</span>
+                Vencida
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Created Date -->
+        <div class="field-group">
+          <label class="field-label">
+            <span class="material-icons">add_circle</span>
+            Fecha de creación
+          </label>
+          <div class="field-content">
+            <span class="date-text">{{ formatDate(task.createdAt) }}</span>
+          </div>
+        </div>
+
+        <!-- Last Updated -->
+        <div class="field-group">
+          <label class="field-label">
+            <span class="material-icons">update</span>
+            Última actualización
+          </label>
+          <div class="field-content">
+            <span class="date-text">{{ formatDate(task.updatedAt) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Read-only Notice -->
+    <div class="readonly-notice">
+      <span class="material-icons">visibility</span>
+      <span>Vista solo lectura - Contacta a tu administrador para modificar esta tarea</span>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="onClose()">
+        <span class="material-icons">close</span>
+        Cerrar
+      </button>
+    </div>
+  </div>
+</app-modal>

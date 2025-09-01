@@ -143,7 +143,7 @@
             
             <!-- Task Meta -->
             <div class="task-meta">
-              <div class="assignee">
+              <div class="assignee" *ngIf="!hideAssignee">
                 <span class="material-icons">person</span>
                 <span>{{ taskEvent.task.assignedFirstName }} {{ taskEvent.task.assignedLastName }}</span>
               </div>
@@ -170,10 +170,10 @@
             <button class="action-btn view-btn" (click)="onTaskView(taskEvent.task)" title="Ver detalles">
               <span class="material-icons">visibility</span>
             </button>
-            <button class="action-btn edit-btn" (click)="onTaskEdit(taskEvent.task)" title="Editar">
+            <button class="action-btn edit-btn" *ngIf="showActions" (click)="onTaskEdit(taskEvent.task)" title="Editar">
               <span class="material-icons">edit</span>
             </button>
-            <button class="action-btn delete-btn" (click)="onTaskDelete(taskEvent.task.taskId)" title="Eliminar">
+            <button class="action-btn delete-btn" *ngIf="showActions" (click)="onTaskDelete(taskEvent.task.taskId)" title="Eliminar">
               <span class="material-icons">delete</span>
             </button>
           </div>

@@ -1,1 +1,214 @@
-<p>my-tasks works!</p>
+<div class="my-tasks-container">
+  <!-- Header -->
+  <app-header 
+    [userProfile]="userProfile"
+    [showSearch]="true"
+    [showNotifications]="true"
+    (onSearch)="onHeaderSearch($event)"
+    (onLogout)="onLogout()"
+    (onProfileClick)="onProfileClick()">
+  </app-header>
+
+  <!-- Main content -->
+  <div class="my-tasks-content">
+    <div class="content-wrapper">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="header-info">
+          <h1>Mis Tareas</h1>
+          <p>Visualiza y gestiona tus tareas asignadas</p>
+          <div class="header-stats">
+            <!-- Mobile-optimized stats grid -->
+            <div class="stats-grid">
+              <div class="stat-item">
+                <span class="material-icons">assignment</span>
+                <div class="stat-content">
+                  <span class="stat-number">{{ getTotalTasks() }}</span>
+                  <span class="stat-label">Total</span>
+                </div>
+              </div>
+              <div class="stat-item pending">
+                <span class="material-icons">schedule</span>
+                <div class="stat-content">
+                  <span class="stat-number">{{ workspaceStats.pendingTasks }}</span>
+                  <span class="stat-label desktop-hidden">Pend.</span>
+                  <span class="stat-label mobile-hidden">Pendientes</span>
+                </div>
+              </div>
+              <div class="stat-item progress">
+                <span class="material-icons">play_circle</span>
+                <div class="stat-content">
+                  <span class="stat-number">{{ workspaceStats.inProgressTasks }}</span>
+                  <span class="stat-label desktop-hidden">Prog.</span>
+                  <span class="stat-label mobile-hidden">En Progreso</span>
+                </div>
+              </div>
+              <div class="stat-item completed">
+                <span class="material-icons">check_circle</span>
+                <div class="stat-content">
+                  <span class="stat-number">{{ workspaceStats.completedTasks }}</span>
+                  <span class="stat-label desktop-hidden">Comp.</span>
+                  <span class="stat-label mobile-hidden">Completadas</span>
+                </div>
+              </div>
+           
+              <div class="stat-item due-soon" *ngIf="getTasksDueSoon() > 0">
+                <span class="material-icons">today</span>
+                <div class="stat-content">
+                  <span class="stat-number">{{ getTasksDueSoon() }}</span>
+                  <span class="stat-label desktop-hidden">Próx.</span>
+                  <span class="stat-label mobile-hidden">Próximas</span>
+                </div>
+              </div>
+            </div>
+            <div class="completion-bar" *ngIf="getTotalTasks() > 0">
+              <div class="completion-info">
+                <span class="mobile-hidden">Tu progreso:</span>
+                <span class="desktop-hidden">Progreso:</span>
+                <span class="completion-percentage">{{ getCompletionPercentage() }}%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="getCompletionPercentage()"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-secondary" (click)="refreshWorkspace()">
+            <span class="material-icons">refresh</span>
+            Actualizar
+          </button>
+        </div>
+      </div>
+
+      <!-- View Selector -->
+      <div class="view-selector-section">
+        <app-task-view-selector
+          [currentView]="currentViewMode"
+          (viewChange)="onViewModeChange($event)">
+        </app-task-view-selector>
+      </div>
+
+      <!-- Tasks Content -->
+      <div class="tasks-content">
+        <!-- Cards View -->
+        <app-task-grid
+          *ngIf="currentViewMode === 'cards'"
+          [tasks]="paginatedTasks"
+          [loading]="loading"
+          [showActions]="false"
+          [hideAssignee]="true"
+          (viewDetails)="onViewTaskDetails($event)">
+        </app-task-grid>
+
+        <!-- Board View -->
+        <app-task-board
+          *ngIf="currentViewMode === 'board'"
+          [tasks]="filteredTasks"
+          [loading]="loading"
+          [showActions]="false"
+          [hideAssignee]="true"
+          (taskView)="onViewTaskDetails($event)"
+          (taskStatusChange)="onTaskStatusChange($event)">
+        </app-task-board>
+
+        <!-- Table View -->
+        <app-task-table
+          *ngIf="currentViewMode === 'table'"
+          [tasks]="paginatedTasks"
+          [loading]="loading"
+          [showActions]="false"
+          [hideAssignee]="true"
+          (taskView)="onViewTaskDetails($event)">
+        </app-task-table>
+
+        <!-- Calendar View -->
+        <app-task-calendar
+          *ngIf="currentViewMode === 'calendar'"
+          [tasks]="filteredTasks"
+          [loading]="loading"
+          [showActions]="false"
+          [hideAssignee]="true"
+          (taskView)="onViewTaskDetails($event)">
+        </app-task-calendar>
+
+        <!-- List View -->
+        <app-task-list
+          *ngIf="currentViewMode === 'list'"
+          [tasks]="paginatedTasks"
+          [loading]="loading"
+          [showActions]="false"
+          [hideAssignee]="true"
+          (taskView)="onViewTaskDetails($event)">
+        </app-task-list>
+
+        <!-- Other views placeholder -->
+        <div *ngIf="currentViewMode !== 'cards' && currentViewMode !== 'board' && currentViewMode !== 'table' && currentViewMode !== 'calendar' && currentViewMode !== 'list'" class="view-placeholder">
+          <div class="placeholder-content">
+            <span class="material-icons">construction</span>
+            <h3>Vista en desarrollo</h3>
+            <p>La vista "{{ currentViewMode }}" estará disponible próximamente</p>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="!loading && tasks.length === 0" class="empty-state">
+          <div class="empty-content">
+            <span class="material-icons">assignment_late</span>
+            <h3 class="mobile-hidden">No tienes tareas asignadas</h3>
+            <h3 class="desktop-hidden">Sin tareas</h3>
+            <p class="mobile-hidden">Cuando tengas tareas asignadas, aparecerán aquí</p>
+            <p class="desktop-hidden">No hay tareas asignadas</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-section" *ngIf="currentViewMode === 'cards' || currentViewMode === 'table'">
+        <app-pagination 
+          [currentPage]="currentPage" 
+          [totalPages]="totalPages"
+          [totalItems]="totalItems"
+          [itemsPerPage]="itemsPerPage"
+          [itemsPerPageOptions]="itemsPerPageOptions"
+          (pageChange)="onPageChange($event)"
+          (itemsPerPageChange)="onItemsPerPageChange($event)">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+
+  <!-- Responsive Loader -->
+  <app-loader 
+    *ngIf="loading"
+    message="Cargando tus tareas..."
+    size="lg">
+  </app-loader>
+
+  <!-- Task Details Modal (Read-only) -->
+  <app-task-details-modal
+    [isOpen]="isTaskDetailsModalVisible"
+    [task]="selectedTask"
+    [hideAssignee]="true"
+    (close)="onCloseTaskDetailsModal()">
+  </app-task-details-modal>
+
+  <!-- Logout Confirmation Modal -->
+  <app-modal 
+    [title]="'Confirmación de Cierre de Sesión'" 
+    [visible]="isModalVisible"
+    [confirmText]="'Cerrar Sesión'"
+    [cancelText]="'Cancelar'"
+    (close)="onModalClose()"
+    (confirm)="onConfirmLogout()"
+    (cancel)="onModalClose()">
+    
+    <div class="logout-confirmation">
+      <div class="confirmation-icon">
+        <span class="material-icons">logout</span>
+      </div>
+      <p>¿Estás seguro de que deseas cerrar sesión?</p>
+      <p class="confirmation-note">Se perderán todos los cambios no guardados.</p>
+    </div>
+  </app-modal>
+</div>

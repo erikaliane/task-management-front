@@ -47,7 +47,7 @@
               arrow_upward
             </span>
           </th>
-          <th (click)="sortBy('assignedFirstName')" class="sortable">
+          <th (click)="sortBy('assignedFirstName')" class="sortable" *ngIf="!hideAssignee">
             Asignado a
             <span class="sort-icon material-icons" 
                   [class.active]="sortColumn === 'assignedFirstName'"
@@ -98,7 +98,7 @@
           </td>
 
           <!-- Assigned To -->
-          <td class="assignee-cell" data-label="Asignado a">
+          <td class="assignee-cell" data-label="Asignado a" *ngIf="!hideAssignee">
             <div class="assignee-info">
               <span class="material-icons">person</span>
               <span>{{ task.assignedFirstName }} {{ task.assignedLastName }}</span>
@@ -127,10 +127,10 @@
               <button class="action-btn view-btn" (click)="onTaskView(task)" title="Ver detalles">
                 <span class="material-icons">visibility</span>
               </button>
-              <button class="action-btn edit-btn" (click)="onTaskEdit(task)" title="Editar">
+              <button class="action-btn edit-btn" *ngIf="showActions" (click)="onTaskEdit(task)" title="Editar">
                 <span class="material-icons">edit</span>
               </button>
-              <button class="action-btn delete-btn" (click)="onTaskDelete(task.taskId)" title="Eliminar">
+              <button class="action-btn delete-btn" *ngIf="showActions" (click)="onTaskDelete(task.taskId)" title="Eliminar">
                 <span class="material-icons">delete</span>
               </button>
             </div>

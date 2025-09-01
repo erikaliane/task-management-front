@@ -16,10 +16,15 @@ interface BoardColumn {
 export class TaskBoardComponent implements OnInit, OnChanges {
   @Input() tasks: Task[] = [];
   @Input() loading: boolean = false;
+  @Input() showActions: boolean = true;
+  @Input() hideAssignee: boolean = false;
   @Output() taskEdit = new EventEmitter<Task>();
   @Output() taskDelete = new EventEmitter<number>();
   @Output() taskView = new EventEmitter<Task>();
   @Output() taskStatusChange = new EventEmitter<{task: Task, newStatus: string}>();
+
+  // Drag & Drop state
+  private draggedTask: Task | null = null;
 
   columns: BoardColumn[] = [
     {
@@ -76,13 +81,41 @@ export class TaskBoardComponent implements OnInit, OnChanges {
   }
 
   onTaskDrop(event: any, targetStatus: string): void {
-    // Handle drag and drop (future implementation)
-    console.log('Task dropped to status:', targetStatus);
+    event.preventDefault();
+    
+    if (this.draggedTask && this.draggedTask.status !== targetStatus) {
+      console.log('🎯 Dropping task:', this.draggedTask.title, 'to status:', targetStatus);
+      
+      // Emit the status change event
+      this.taskStatusChange.emit({
+        task: this.draggedTask,
+        newStatus: targetStatus
+      });
+    }
+    
+    this.draggedTask = null;
   }
 
   onTaskDragStart(event: any, task: Task): void {
-    // Handle drag start (future implementation)
-    console.log('Task drag started:', task);
+    console.log('🎯 Drag started for task:', task.title);
+    this.draggedTask = task;
+    
+    // Set drag effect
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/html', event.target.outerHTML);
+    
+    // Add visual feedback
+    event.target.style.opacity = '0.5';
+  }
+
+  onDragEnd(event: any): void {
+    // Reset visual feedback
+    event.target.style.opacity = '1';
+  }
+
+  onDragOver(event: any): void {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
   }
 
   getPriorityColor(priority: string): string {

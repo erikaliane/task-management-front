@@ -184,6 +184,24 @@
   .header-actions {
     display: flex;
     gap: 1rem;
+    align-items: center;
+
+    @media (max-width: 992px) {
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    @media (max-width: 480px) {
+      width: 100%;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
 
     .btn {
       display: flex;
@@ -196,6 +214,28 @@
       cursor: pointer;
       transition: all 0.2s ease;
       font-size: 0.9rem;
+      white-space: nowrap;
+      min-height: 44px; // Minimum touch target
+
+      @media (max-width: 992px) {
+        padding: 0.65rem 1.25rem;
+        font-size: 0.875rem;
+      }
+
+      @media (max-width: 768px) {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+        flex: 1;
+        min-width: 140px;
+      }
+
+      @media (max-width: 480px) {
+        width: 100%;
+        justify-content: center;
+        padding: 0.875rem 1rem;
+        font-size: 0.9rem;
+        min-height: 48px;
+      }
 
       .material-icons {
         font-size: 18px;
@@ -218,6 +258,16 @@
         &:hover {
           transform: translateY(-2px);
           box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+      }
+
+      &.btn-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
         }
       }
     }
@@ -695,6 +745,55 @@
   }
 }
 
+// Error notification styles
+:host ::ng-deep .error-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border-left: 4px solid #ef4444;
+  animation: slideInRight 0.3s ease-out;
+
+  .notification-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+
+    .material-icons:first-child {
+      color: #ef4444;
+      font-size: 1.5rem;
+    }
+
+    .notification-message {
+      flex: 1;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .notification-close {
+      background: none;
+      border: none;
+      color: #6b7280;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: #f3f4f6;
+      }
+
+      .material-icons {
+        font-size: 1.25rem;
+      }
+    }
+  }
+}
+
 @keyframes slideInRight {
   from {
     transform: translateX(100%);
@@ -858,4 +957,17 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+// Responsive utility classes
+.mobile-hidden {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+.desktop-hidden {
+  @media (min-width: 769px) {
+    display: none !important;
+  }
 }

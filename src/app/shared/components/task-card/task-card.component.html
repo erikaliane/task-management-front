@@ -21,7 +21,7 @@
     
     <!-- Task Meta Info -->
     <div class="task-meta">
-      <div class="meta-item">
+      <div class="meta-item" *ngIf="!hideAssignee">
         <span class="material-icons">person</span>
         <span>{{ task.assignedFirstName }} {{ task.assignedLastName }}</span>
       </div>

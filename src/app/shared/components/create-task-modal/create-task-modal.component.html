@@ -1,0 +1,162 @@
+<div class="modal-overlay" [class.open]="isOpen" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Nueva Tarea</h2>
+      <button class="close-btn" (click)="onClose()" type="button">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form [formGroup]="createForm" (ngSubmit)="onSubmit()" novalidate>
+        
+        <div class="form-section">
+          <h3>Crear Nueva Tarea</h3>
+          <p>Completa los campos para organizar tu trabajo</p>
+        </div>
+
+        <!-- Título -->
+        <div class="form-group">
+          <label for="title">¿Cuál es tu tarea? *</label>
+          <small class="form-hint">Ejemplo: Revisar documentación</small>
+          <input
+            id="title"
+            type="text"
+            formControlName="title"
+            class="form-control"
+            [class.error]="getFieldError('title')"
+            placeholder="Ejemplo: Revisar documentación"
+            maxlength="100">
+          <div class="error-message" *ngIf="getFieldError('title')">
+            {{ getFieldError('title') }}
+          </div>
+          <div class="character-count">
+            {{ title?.value?.length || 0 }}/100
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="form-group">
+          <label>Describe los detalles</label>
+          <small class="form-hint">Explica qué necesitas hacer paso a paso. Incluye objetivos específicos, recursos necesarios, criterios de éxito y cualquier consideración especial...</small>
+          <textarea
+            formControlName="description"
+            class="form-control"
+            [class.error]="getFieldError('description')"
+            rows="4"
+            placeholder="Detalle paso a paso"
+            maxlength="500">
+          </textarea>
+          <div class="error-message" *ngIf="getFieldError('description')">
+            {{ getFieldError('description') }}
+          </div>
+          <div class="character-count">
+            {{ description?.value?.length || 0 }}/500
+          </div>
+        </div>
+
+        <!-- Fila de Prioridad y Fecha -->
+        <div class="form-row">
+          <!-- Prioridad -->
+          <div class="form-group half">
+            <label for="priority">
+              <span class="material-icons">flag</span>
+              Prioridad *
+            </label>
+            <small class="form-hint">Selecciona la urgencia</small>
+            <select
+              id="priority"
+              formControlName="priority"
+              class="form-control"
+              [class.error]="getFieldError('priority')">
+              <option value="Baja">🟢 Baja - Sin prisa</option>
+              <option value="Media">🟡 Media - Normal</option>
+              <option value="Alta">🔴 Alta - Urgente</option>
+            </select>
+            <div class="error-message" *ngIf="getFieldError('priority')">
+              {{ getFieldError('priority') }}
+            </div>
+          </div>
+
+          <!-- Fecha de vencimiento -->
+          <div class="form-group half">
+            <label for="dueDate">
+              <span class="material-icons">event</span>
+              Fecha límite *
+            </label>
+            <small class="form-hint">¿Cuándo debe estar lista?</small>
+            <input
+              id="dueDate"
+              type="date"
+              formControlName="dueDate"
+              class="form-control"
+              [class.error]="getFieldError('dueDate')"
+              [min]="minDate"
+              [max]="maxDate">
+            <div class="error-message" *ngIf="getFieldError('dueDate')">
+              {{ getFieldError('dueDate') }}
+            </div>
+            <!-- Helper text for date -->
+            <div class="date-helper" *ngIf="dueDate?.value">
+              <span class="material-icons">info</span>
+              <span *ngIf="isToday()" class="today">¡Es para hoy!</span>
+              <span *ngIf="isTomorrow()" class="tomorrow">Es para mañana</span>
+              <span *ngIf="!isToday() && !isTomorrow() && dueDate?.value">
+                {{ getFormattedDate(dueDate!.value) }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Responsable (solo para Admin) -->
+        <div class="form-group" *ngIf="showAssigneeField">
+          <label for="assignedTo">Responsable *</label>
+          <div *ngIf="loadingEmployees" class="loading-employees">
+            <span class="material-icons spinning">refresh</span>
+            Cargando empleados...
+          </div>
+          <select
+            *ngIf="!loadingEmployees"
+            id="assignedTo"
+            formControlName="assignedTo"
+            class="form-control"
+            [class.error]="getFieldError('assignedTo')">
+            <option value="">Selecciona un empleado</option>
+            <option *ngFor="let employee of employees" [value]="employee.userId">
+              {{ getEmployeeFullName(employee) }}
+            </option>
+          </select>
+          <div class="error-message" *ngIf="getFieldError('assignedTo')">
+            {{ getFieldError('assignedTo') }}
+          </div>
+        </div>
+
+        <!-- Note about assignment -->
+        <div class="form-note" *ngIf="!showAssigneeField">
+          <span class="material-icons">info</span>
+          <span>Esta tarea se asignará automáticamente a ti</span>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button 
+        type="button" 
+        class="btn btn-secondary" 
+        (click)="onClose()"
+        [disabled]="loading">
+        Cancelar
+      </button>
+      <button 
+        type="submit" 
+        class="btn btn-primary" 
+        (click)="onSubmit()"
+        [disabled]="loading || createForm.invalid">
+        <span *ngIf="loading" class="material-icons spinning">refresh</span>
+        <span *ngIf="!loading" class="material-icons">add_task</span>
+        {{ loading ? 'Creando...' : 'Crear Tarea' }}
+      </button>
+    </div>
+  </div>
+</div>

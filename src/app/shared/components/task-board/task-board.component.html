@@ -1,4 +1,12 @@
 <div class="task-board-container">
+  <!-- Drag & Drop Instructions for Employees -->
+  <div class="board-instructions" *ngIf="!loading && !showActions && tasks.length > 0">
+    <div class="instruction-banner">
+      <span class="material-icons">touch_app</span>
+      <span class="instruction-text">Arrastra las tareas entre columnas para cambiar su estado</span>
+    </div>
+  </div>
+  
   <!-- Loading State -->
   <div *ngIf="loading" class="board-loading">
     <div class="loading-columns">
@@ -24,24 +32,42 @@
           <h3>{{ column.title }}</h3>
           <span class="task-count">({{ column.tasks.length }})</span>
         </div>
+        <!-- Drag & Drop Instructions for Employees -->
+        <div class="drag-instructions" *ngIf="!showActions">
+          <span class="material-icons">drag_indicator</span>
+          <span class="instruction-text">Arrastra las tareas aquí</span>
+        </div>
       </div>
 
       <!-- Column Content -->
       <div class="column-content"
            (drop)="onTaskDrop($event, column.status)"
-           (dragover)="$event.preventDefault()">
+           (dragover)="onDragOver($event)"
+           (dragenter)="$event.preventDefault()">
         
         <!-- Empty State -->
         <div *ngIf="column.tasks.length === 0" class="empty-column">
           <span class="material-icons">task_alt</span>
           <p>No hay tareas {{ column.title.toLowerCase() }}</p>
+          <!-- Enhanced drag instruction for empty columns -->
+          <div class="empty-drag-hint" *ngIf="!showActions">
+            <span class="material-icons">open_with</span>
+            <span>Arrastra una tarea aquí para cambiar su estado</span>
+          </div>
         </div>
 
         <!-- Task Cards -->
         <div *ngFor="let task of column.tasks" 
              class="board-task-card"
+             [class.draggable-card]="!showActions"
              draggable="true"
-             (dragstart)="onTaskDragStart($event, task)">
+             (dragstart)="onTaskDragStart($event, task)"
+             (dragend)="onDragEnd($event)">
+          
+          <!-- Drag indicator for employees -->
+          <div class="drag-handle" *ngIf="!showActions">
+            <span class="material-icons">drag_indicator</span>
+          </div>
           
           <!-- Task Header -->
           <div class="task-header">
@@ -60,7 +86,7 @@
 
           <!-- Task Meta -->
           <div class="task-meta">
-            <div class="assignee">
+            <div class="assignee" *ngIf="!hideAssignee">
               <span class="material-icons">person</span>
               <span>{{ task.assignedFirstName }} {{ task.assignedLastName }}</span>
             </div>
@@ -71,7 +97,7 @@
           </div>
 
           <!-- Task Actions -->
-          <div class="task-actions">
+          <div class="task-actions" *ngIf="showActions">
             <button class="action-btn view-btn" (click)="onTaskView(task)" title="Ver detalles">
               <span class="material-icons">visibility</span>
             </button>
@@ -80,6 +106,12 @@
             </button>
             <button class="action-btn delete-btn" (click)="onTaskDelete(task.taskId)" title="Eliminar">
               <span class="material-icons">delete</span>
+            </button>
+          </div>
+          <!-- View Only Actions -->
+          <div class="task-actions" *ngIf="!showActions">
+            <button class="action-btn view-btn" (click)="onTaskView(task)" title="Ver detalles">
+              <span class="material-icons">visibility</span>
             </button>
           </div>
         </div>
