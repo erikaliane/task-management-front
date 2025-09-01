@@ -8,7 +8,7 @@ import {  UserRole } from '../models/auth.model';
 import { TokenService } from './token.service';
 
 
-import { environment } from '../../../environments/environment';
+import { environment } from '@envs/environment';
 @Injectable({
   providedIn: 'root'
 })
