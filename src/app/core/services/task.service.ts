@@ -49,7 +49,7 @@ export interface TaskCreateRequest {
   providedIn: 'root'
 })
 export class TaskService {
-  private readonly apiUrl = `${environment.apiUrl}/tasks`;
+  private readonly API_URL = environment.apiUrl;
 
   constructor(
     private http: HttpClient,
@@ -64,7 +64,7 @@ export class TaskService {
     const taskRequest = this.mapFormDataToCreateRequest(taskData);
     const headers = this.getAuthHeaders();
     
-    return this.http.post<any>(this.apiUrl, taskRequest, { headers })
+    return this.http.post<any>(this.API_URL, taskRequest, { headers })
       .pipe(
         
         catchError(this.errorHandler.handleError('Ha ocurrido un error al crear la tarea'))
@@ -77,7 +77,7 @@ export class TaskService {
   getTasks(): Observable<Task[]> {
     const headers = this.getAuthHeaders();
     
-    return this.http.get<Task[]>(this.apiUrl, { headers })
+    return this.http.get<Task[]>(this.API_URL, { headers })
       .pipe(
         catchError(this.errorHandler.handleError('Ha ocurrido un error al obtener las tareas'))
       );
@@ -89,7 +89,7 @@ export class TaskService {
   deleteTask(taskId: number): Observable<any> {
     const headers = this.getAuthHeaders();
     
-    return this.http.delete<any>(`${this.apiUrl}/${taskId}`, { headers })
+    return this.http.delete<any>(`${this.API_URL}/${taskId}`, { headers })
       .pipe(
         catchError(this.errorHandler.handleError('Ha ocurrido un error al eliminar la tarea'))
       );
@@ -102,7 +102,7 @@ export class TaskService {
     const headers = this.getAuthHeaders();
     console.log('🔄 Enviando datos de actualización:', { taskId, taskData });
     
-    return this.http.put<any>(`${this.apiUrl}/${taskId}`, taskData, { headers })
+    return this.http.put<any>(`${this.API_URL}/${taskId}`, taskData, { headers })
       .pipe(
         catchError(this.errorHandler.handleError('Ha ocurrido un error al actualizar la tarea'))
       );

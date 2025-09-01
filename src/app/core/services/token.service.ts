@@ -6,7 +6,9 @@ import { Injectable } from '@angular/core';
 export class TokenService {
   private readonly TOKEN_KEY = 'task_management_token';
 
-  constructor() {}
+  constructor() {
+
+  }
 
   setToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);

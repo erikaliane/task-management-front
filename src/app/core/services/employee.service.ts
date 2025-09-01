@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ErrorHandlerService } from './error-handler.service';
 import { TokenService } from './token.service';
+import { environment } from '../../../environments/environment';
 
 export interface Employee {
   userId: number;
@@ -16,7 +17,9 @@ export interface Employee {
 })
 
 export class EmployeeService {
-  private readonly apiUrl = 'http://localhost:5137/api/profile/employee-profiles';
+  private readonly apiUrl = `${environment.apiUrl}/profile/employee-profiles`;
+
+  
 
   constructor(
     private http: HttpClient,
