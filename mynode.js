@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv').config({ path: 'src/.env' });
 
-const apiUrl = process.env.API_URL || 'http://localhost:5137/api';
+const apiUrl = process.env.apiUrl || 'http://localhost:5137/api';
 
 const envFile = `export const environment = {
     apiUrl: '${apiUrl}',
