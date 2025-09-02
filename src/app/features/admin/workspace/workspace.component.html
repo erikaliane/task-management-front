@@ -15,8 +15,8 @@
       <!-- Page Header -->
       <div class="page-header">
         <div class="header-info">
-          <h1>Espacio de Trabajo</h1>
-          <p>Gestiona tus tareas y proyectos de manera eficiente</p>
+          <h1>Tareas</h1>
+          <p>Gestiona  tareas y proyectos de manera eficiente</p>
           <div class="header-stats">
             <div class="stats-grid">
               <div class="stat-item">
@@ -54,13 +54,7 @@
                   <span class="stat-label">Vencidas</span>
                 </div>
               </div>
-              <div class="stat-item high-priority" *ngIf="getHighPriorityTasks() > 0">
-                <span class="material-icons">flag</span>
-                <div class="stat-content">
-                  <span class="stat-number">{{ getHighPriorityTasks() }}</span>
-                  <span class="stat-label">Alta Prioridad</span>
-                </div>
-              </div>
+             
               <div class="stat-item due-soon" *ngIf="getTasksDueSoon() > 0">
                 <span class="material-icons">today</span>
                 <div class="stat-content">

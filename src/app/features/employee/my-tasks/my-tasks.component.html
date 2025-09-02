@@ -52,14 +52,7 @@
                 </div>
               </div>
            
-              <div class="stat-item due-soon" *ngIf="getTasksDueSoon() > 0">
-                <span class="material-icons">today</span>
-                <div class="stat-content">
-                  <span class="stat-number">{{ getTasksDueSoon() }}</span>
-                  <span class="stat-label desktop-hidden">Próx.</span>
-                  <span class="stat-label mobile-hidden">Próximas</span>
-                </div>
-              </div>
+             
             </div>
             <div class="completion-bar" *ngIf="getTotalTasks() > 0">
               <div class="completion-info">

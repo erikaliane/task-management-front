@@ -2,27 +2,9 @@
      [class.overlay]="overlay" 
      [class]="'loader-' + size">
   <div class="loader-content">
-    
-    <!-- Spinner de anillos (default) -->
-    <div class="spinner" *ngIf="type === 'rings'">
-      <div class="spinner-ring"></div>
-      <div class="spinner-ring"></div>
-      <div class="spinner-ring"></div>
+    <div class="spinner-simple">
+      <div class="circle"></div>
     </div>
-
-    <!-- Spinner con gradiente -->
-    <div class="spinner-gradient" *ngIf="type === 'gradient'">
-      <div class="gradient-circle"></div>
-    </div>
-
-    <!-- Spinner de puntos -->
-    <div class="spinner-dots" *ngIf="type === 'dots'">
-      <div class="dot"></div>
-      <div class="dot"></div>
-      <div class="dot"></div>
-      <div class="dot"></div>
-    </div>
-
-    <p class="loader-message" *ngIf="message" [innerHTML]="message"></p>
+    <p class="loader-message" *ngIf="message">{{ message }}</p>
   </div>
 </div>

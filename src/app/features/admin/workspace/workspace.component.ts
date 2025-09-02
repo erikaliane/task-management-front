@@ -101,7 +101,7 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
     name: 'Erika Liane',
     email: 'erikaliane@empresa.com',
     role: 'Admin',
-    avatar: 'assets/avatars/erika.jpg'
+    avatar: 'https://res.cloudinary.com/dhfsbbos3/image/upload/v1711056243/CEEC/mvnegfqtwbqkjxtidtmx.png'
   };
 
   // Datos del workspace (se actualizan dinámicamente)

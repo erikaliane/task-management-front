@@ -49,14 +49,12 @@ private readonly API_URL = environment.API_URL;
   isAdmin(): boolean {
     const role = this.tokenService.getUserRole();
     const isAdminUser = role === UserRole.ADMIN;
-    console.log('👑 ¿Es admin?', isAdminUser);
     return isAdminUser;
   }
 
   isEmployee(): boolean {
     const role = this.tokenService.getUserRole();
     const isEmployeeUser = role === UserRole.EMPLOYEE;
-    console.log('👤 ¿Es employee?', isEmployeeUser);
     return isEmployeeUser;
   }
 

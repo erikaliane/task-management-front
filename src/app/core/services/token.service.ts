@@ -12,7 +12,6 @@ export class TokenService {
 
   setToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
-    console.log('🔑 Token guardado:', token);
   }
 
   getToken(): string | null {
@@ -55,7 +54,6 @@ export class TokenService {
 
   clearAllTokens(): void {
     this.removeToken();
-    console.log('🧹 Todos los tokens limpiados');
   }
 
   getUserRole(): string | null {
